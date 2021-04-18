@@ -10,6 +10,7 @@ from PyQt5.QtGui import QPixmap
 
 #Other Win
 import FCFS
+import SRTF
 
 class processSchedWin(QMainWindow):
     def __init__(self):
@@ -61,9 +62,19 @@ class processSchedWin(QMainWindow):
         FCFSButton.setFont(QtGui.QFont('Times New Roman',14))
         FCFSButton.clicked.connect(self.clickedFCFS)
 
+        SRTFButton = QPushButton('Shortest Remaining Time First', self)
+        SRTFButton.setGeometry(QRect(180,250 + 100+ 25, 270, 100))
+        SRTFButton.setFont(QtGui.QFont('Times New Roman',12))
+        SRTFButton.clicked.connect(self.clickedSRTF)
+
     def clickedFCFS(self):
         self._FCFSWin = FCFS.FCFSWin()
         self._FCFSWin.show()
+        self.hide()
+
+    def clickedSRTF(self):
+        self._SRTFWin = SRTF.SRTFWin()
+        self._SRTFWin.show()
         self.hide()
 
 if __name__ == "__main__":
