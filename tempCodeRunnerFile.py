@@ -1,1 +1,0 @@
-self.rowCount = self.FCFSTable.rowCount()
