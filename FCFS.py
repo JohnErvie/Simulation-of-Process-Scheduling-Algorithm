@@ -278,9 +278,9 @@ class FCFS_ResultWin(QMainWindow):
         global FCFS_values
         self.FCFS_valTables = FCFS_values
         values = self.FCFS_valTables
-        lengthSRTF_valTables = len(values)
+        lengthFCFS_valTables = len(values)
 
-        allProcess = int(lengthSRTF_valTables/3)
+        allProcess = int(lengthFCFS_valTables/3)
 
         listedVal = []
 

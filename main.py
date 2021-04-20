@@ -11,6 +11,7 @@ from PyQt5.QtGui import QPixmap
 #Other Win
 import FCFS
 import SRTF
+import RR
 
 class processSchedWin(QMainWindow):
     def __init__(self):
@@ -70,7 +71,7 @@ class processSchedWin(QMainWindow):
         RRButton = QPushButton('Round Robin', self)
         RRButton.setGeometry(QRect(180,250 + 100+ 25 + 125, 270, 100))
         RRButton.setFont(QtGui.QFont('Times New Roman',14))
-        #RRButton.clicked.connect(self.clickedSRTF)
+        RRButton.clicked.connect(self.clickedRR)
 
     def clickedFCFS(self):
         self._FCFSWin = FCFS.FCFSWin()
@@ -80,6 +81,11 @@ class processSchedWin(QMainWindow):
     def clickedSRTF(self):
         self._SRTFWin = SRTF.SRTFWin()
         self._SRTFWin.show()
+        self.hide()
+
+    def clickedRR(self):
+        self._RR_Win = RR.RR_Win()
+        self._RR_Win.show()
         self.hide()
 
 if __name__ == "__main__":

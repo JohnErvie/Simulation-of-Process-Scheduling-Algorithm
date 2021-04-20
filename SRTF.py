@@ -414,16 +414,16 @@ class SRTF_ResultWin(QMainWindow):
         backButton.setGeometry(QRect(150,850, 150, 50))
         #backButton.setStyleSheet("QWidget {background-color: Blue}")
         backButton.setFont(QtGui.QFont('Times New Roman',14))
-        backButton.clicked.connect(self.clickedBackFCFS)
+        backButton.clicked.connect(self.clickedBack)
 
         calButton = QPushButton('Main Menu', self)
         calButton.setGeometry(QRect(1200-150-165,850, 150, 50))
         calButton.setFont(QtGui.QFont('Times New Roman',14))
         calButton.clicked.connect(self.clickedMainMenu)
 
-    def clickedBackFCFS(self):
-        self._FCFSWin = FCFSWin()
-        self._FCFSWin.show()
+    def clickedBack(self):
+        self._SRTFWin = SRTFWin()
+        self._SRTFWin.show()
         self.hide()
 
     def clickedMainMenu(self):
