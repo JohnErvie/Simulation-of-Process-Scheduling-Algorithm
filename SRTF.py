@@ -300,13 +300,14 @@ class SRTF_ResultWin(QMainWindow):
         loopqueue = True
         loopbt = True
 
+        totalEndTime = 0
         numTerminate = 0
 
         loop = True
         while loop != False:
             # if is there process arrive in current time then add it into queue
             for row in range(allProcess):
-                if time == int(listedVal[row][1]): ## if there equal to queue
+                if time == int(listedVal[row][1]): ## if there equal to time
                     queue.append([]) ## adding to queue
                     queue[int(len(queue))-1].append(listedVal[row][0])
                     queue[int(len(queue))-1].append(int(listedVal[row][1]))
@@ -338,6 +339,7 @@ class SRTF_ResultWin(QMainWindow):
                 qRow += 1
 
             if numTerminate == allProcess:
+                totalEndTime = time + 1
                 loop = False
 
             time += 1
@@ -346,8 +348,15 @@ class SRTF_ResultWin(QMainWindow):
             listedVal[i].append(int(listedVal[i][3]) - int(listedVal[i][1])) # End Time - Arrival Time
             listedVal[i].append(int(listedVal[i][4]) - int(listedVal[i][2])) # Turn Around Time - Burst Time
 
+        self.cpuUtil = 0
         self.aveTT = 0
         self.aveWT = 0
+        totalBurstTime = 0
+
+        for i in range(allProcess): #computing the Cpu Utilization
+            totalBurstTime += int(listedVal[i][2])
+
+        self.cpuUtil = (totalBurstTime/totalEndTime)*100 # formula for Cpu Utilization
 
         for i in range(allProcess): #computing the average turn around time
             self.aveWT += int(listedVal[i][5])/allProcess
@@ -374,13 +383,10 @@ class SRTF_ResultWin(QMainWindow):
         self.SRTFResultTable.setColumnWidth(4,158)
         self.SRTFResultTable.setColumnWidth(5,158)
 
-        valIndex = 0
-        for i in range(self.rowResultTable):
-            for j in range(0,3):
-                self.SRTFResultTable.setItem(i,j,QTableWidgetItem(str(self.SRTF_valTables[valIndex])))
-                valIndex += 1
-
-        for i in range(self.rowResultTable): # inputting the End time into table     
+        for i in range(self.rowResultTable): # inputting the End time into table
+            self.SRTFResultTable.setItem(i,0,QTableWidgetItem(str(self.listedValNew[i][0])))
+            self.SRTFResultTable.setItem(i,1,QTableWidgetItem(str(self.listedValNew[i][1])))
+            self.SRTFResultTable.setItem(i,2,QTableWidgetItem(str(self.listedValNew[i][2]))) 
             self.SRTFResultTable.setItem(i,3,QTableWidgetItem(str(self.listedValNew[i][3])))
             self.SRTFResultTable.setItem(i,4,QTableWidgetItem(str(self.listedValNew[i][4])))
             self.SRTFResultTable.setItem(i,5,QTableWidgetItem(str(self.listedValNew[i][5])))
@@ -396,6 +402,12 @@ class SRTF_ResultWin(QMainWindow):
         self.aveTTLabel.setStyleSheet("QWidget { color: Black}")
         self.aveTTLabel.setFont(QtGui.QFont('Sanserif', 13, QtGui.QFont.Bold))
         self.aveTTLabel.setText("Average Turn Around Time: " + "%.2f" %(self.aveTT))
+
+        self.CPUUtilLabel = QLabel(self)
+        self.CPUUtilLabel.setGeometry(QRect(100,500 + 25 + 25, 900, 50))
+        self.CPUUtilLabel.setStyleSheet("QWidget { color: Black}")
+        self.CPUUtilLabel.setFont(QtGui.QFont('Sanserif', 13, QtGui.QFont.Bold))
+        self.CPUUtilLabel.setText("CPU Utilization: " + "%.0f" %(self.cpuUtil) + "%")
 
     def resultButtons(self):
         backButton = QPushButton('Back to SRTF', self)
