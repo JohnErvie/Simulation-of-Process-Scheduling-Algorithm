@@ -18,7 +18,7 @@ class SRTFWin(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.title = "This is a template"
+        self.title = "Round Robin"
         self.width = 1200
         self.height = 950
 
@@ -50,17 +50,28 @@ class SRTFWin(QMainWindow):
         self.move(qr.topLeft())
 
     def Labels(self):
-        titleLabel = QLabel("This is a template", self)
-        titleLabel.setGeometry(QRect(30+150+25,50, 900, 100))
+        titleLabel = QLabel("Round Robin", self)
+        titleLabel.setGeometry(QRect(30+150+250,50, 900, 100))
         titleLabel.setStyleSheet("QWidget { color: Black}")
         titleLabel.setFont(QtGui.QFont('Sanserif', 30, QtGui.QFont.Bold))
+
+        quantumTimeLbl = QLabel("Quantum Time: ", self)
+        quantumTimeLbl.setGeometry(QRect(100,800, 500, 50))
+        quantumTimeLbl.setStyleSheet("QWidget { color: Black}")
+        quantumTimeLbl.setFont(QtGui.QFont('Sanserif', 15, QtGui.QFont.Bold))
+
+        self.onlyInt = QIntValidator()
+        self.quantumTimeLE = QLineEdit("",self)
+        self.quantumTimeLE.setFont(QtGui.QFont('Times New Roman',14))
+        self.quantumTimeLE.setGeometry(QRect(100+200,800+10, 100, 35))
+        self.quantumTimeLE.setValidator(self.onlyInt)
         
     def Buttons(self):
         backButton = QPushButton('Back', self)
         backButton.setGeometry(QRect(150,850, 150, 50))
         #backButton.setStyleSheet("QWidget {background-color: Blue}")
         backButton.setFont(QtGui.QFont('Times New Roman',14))
-        #backButton.clicked.connect(self.clickedBack)
+        backButton.clicked.connect(self.clickedBack)
 
         self.addBtnHeight = 0
 
@@ -95,10 +106,10 @@ class SRTFWin(QMainWindow):
 
         self.updateAddRow()
 
-    #def clickedBack(self):
-    #    self._processSchedWin = main.processSchedWin()
-    #    self._processSchedWin.show()
-    #    self.hide()
+    def clickedBack(self):
+        self._processSchedWin = main.processSchedWin()
+        self._processSchedWin.show()
+        self.hide()
 
     def clickedAdd(self):
         self.addBtnHeight += 37
@@ -209,22 +220,31 @@ class SRTFWin(QMainWindow):
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.show()
 
+        elif str(self.quantumTimeLE.text()) == '':
+            QTmsg = QMessageBox(self)
+            QTmsg.setIcon(QMessageBox.Information)
+            QTmsg.setText("Error: Quantum time is empty")
+            QTmsg.setInformativeText("Please enter the quantum time before to proceed.")
+            QTmsg.setWindowTitle("Error")
+            QTmsg.setStandardButtons(QMessageBox.Ok)
+            QTmsg.show()
+
         # check if there is/are the same process ID
         elif len(processID) != len(set(processID)):
             msgPID = QMessageBox(self)
             msgPID.setIcon(QMessageBox.Information)
             msgPID.setText("Error: Same process ID")
-            msgPID.setInformativeText("There is/are the same process ID, Please check it.")
+            msgPID.setInformativeText("There are the same process ID, Please check it.")
             msgPID.setWindowTitle("Error")
             msgPID.setStandardButtons(QMessageBox.Ok)
             msgPID.show()
 
-        else:
-            global SRTF_values
-            SRTF_values = self.valTables
-            self._SRTF_ResultWin = SRTF_ResultWin()
-            self._SRTF_ResultWin.show()
-            self.hide()
+        #else:
+            #global SRTF_values
+            #SRTF_values = self.valTables
+            #self._SRTF_ResultWin = SRTF_ResultWin()
+            #self._SRTF_ResultWin.show()
+            #self.hide()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

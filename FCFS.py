@@ -217,7 +217,7 @@ class FCFSWin(QMainWindow):
             msgPID = QMessageBox(self)
             msgPID.setIcon(QMessageBox.Information)
             msgPID.setText("Error: Same process ID")
-            msgPID.setInformativeText("There is/are the same process ID, Please check it.")
+            msgPID.setInformativeText("There are the same process ID, Please check it.")
             msgPID.setWindowTitle("Error")
             msgPID.setStandardButtons(QMessageBox.Ok)
             msgPID.show()

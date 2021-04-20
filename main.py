@@ -67,6 +67,11 @@ class processSchedWin(QMainWindow):
         SRTFButton.setFont(QtGui.QFont('Times New Roman',12))
         SRTFButton.clicked.connect(self.clickedSRTF)
 
+        RRButton = QPushButton('Round Robin', self)
+        RRButton.setGeometry(QRect(180,250 + 100+ 25 + 125, 270, 100))
+        RRButton.setFont(QtGui.QFont('Times New Roman',14))
+        #RRButton.clicked.connect(self.clickedSRTF)
+
     def clickedFCFS(self):
         self._FCFSWin = FCFS.FCFSWin()
         self._FCFSWin.show()

@@ -60,7 +60,7 @@ class SRTFWin(QMainWindow):
         backButton.setGeometry(QRect(150,850, 150, 50))
         #backButton.setStyleSheet("QWidget {background-color: Blue}")
         backButton.setFont(QtGui.QFont('Times New Roman',14))
-        #backButton.clicked.connect(self.clickedBack)
+        backButton.clicked.connect(self.clickedBack)
 
         self.addBtnHeight = 0
 
@@ -95,10 +95,10 @@ class SRTFWin(QMainWindow):
 
         self.updateAddRow()
 
-    #def clickedBack(self):
-    #    self._processSchedWin = main.processSchedWin()
-    #    self._processSchedWin.show()
-    #    self.hide()
+    def clickedBack(self):
+        self._processSchedWin = main.processSchedWin()
+        self._processSchedWin.show()
+        self.hide()
 
     def clickedAdd(self):
         self.addBtnHeight += 37
@@ -214,7 +214,7 @@ class SRTFWin(QMainWindow):
             msgPID = QMessageBox(self)
             msgPID.setIcon(QMessageBox.Information)
             msgPID.setText("Error: Same process ID")
-            msgPID.setInformativeText("There is/are the same process ID, Please check it.")
+            msgPID.setInformativeText("There are the same process ID, Please check it.")
             msgPID.setWindowTitle("Error")
             msgPID.setStandardButtons(QMessageBox.Ok)
             msgPID.show()
