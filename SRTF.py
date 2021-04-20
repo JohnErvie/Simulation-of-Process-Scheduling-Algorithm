@@ -219,12 +219,12 @@ class SRTFWin(QMainWindow):
             msgPID.setStandardButtons(QMessageBox.Ok)
             msgPID.show()
 
-        #else:
-        #    global SRTF_values
-        #    SRTF_values = self.valTables
-        #    self._SRTF_ResultWin = SRTF_ResultWin()
-        #    self._SRTF_ResultWin.show()
-        #    self.hide()
+        else:
+            global SRTF_values
+            SRTF_values = self.valTables
+            self._SRTF_ResultWin = SRTF_ResultWin()
+            self._SRTF_ResultWin.show()
+            self.hide()
 
 # SRTF Result Window
 class SRTF_ResultWin(QMainWindow):
@@ -263,8 +263,6 @@ class SRTF_ResultWin(QMainWindow):
         # top left of rectangle becomes top left of window centering it
         self.move(qr.topLeft())
 
-        #print(self.FCFS_valTables)
-
     def resultLabels(self):
         titleResultLabel = QLabel("Result", self)
         titleResultLabel.setGeometry(QRect(30+125+350,50, 900, 100))
@@ -275,127 +273,129 @@ class SRTF_ResultWin(QMainWindow):
         global SRTF_values
         self.SRTF_valTables = SRTF_values
         lengthSRTF_valTables = len(self.SRTF_valTables)
-        '''
-        self.PID = []
-        self.arrivalTime = []
-        self.burstTime = []
 
-        i = 0 # PID starts with 0 index
-        while i < lengthSRTF_valTables:
-            self.PID.append(self.SRTF_valTables[i])
-            i += 3
+        values = self.SRTF_valTables
+        lengthSRTF_valTables = len(values)
 
-        i = 1 # PID starts with 1 index
-        while i < lengthSRTF_valTables:
-            self.arrivalTime.append(self.SRTF_valTables[i])
-            i += 3
+        allProcess = int(lengthSRTF_valTables/3)
 
-        i = 2 # PID starts with 2 index
-        while i < lengthSRTF_valTables:
-            self.burstTime.append(self.SRTF_valTables[i])
-            i += 3
-        '''
-        self.listedVal = []
+        listedVal = []
 
-        self.listedVal = np.array(self.SRTF_valTables).reshape(int(lengthSRTF_valTables/3),3)
+        for i in range(allProcess): # adding 2d array
+            listedVal.append([])
 
-        self.allProcess = int(lengthSRTF_valTables/3)
+        indexVal = 0
+        for row in range(allProcess): # Converting the values to 2d array
+            for col in range(3):
+                listedVal[row].append(values[indexVal])
+                indexVal += 1
 
-        exe_time = 0
-        end_time = 0
+        endAllProcess = 0
+        for i in range(allProcess):
+            endAllProcess += int(listedVal[i][1]) + int(listedVal[i][2])
 
-        self.waitingTime = []
-        waitingTimeIndex = 0
+        time = 0
+        lowbt = 0
+        queue = []
+        loopqueue = True
+        loopbt = True
 
-        self.TAT = [] #Turn around Time
-        TATIndex = 0
+        numTerminate = 0
 
-        # finding the lowest arrival time then execute
         loop = True
-        i = 0
         while loop != False:
-            for count in range(self.allProcess):
-                if int(self.listedVal[count][1]) == i:
-                    #print("lowest AT row: ", self.listedVal[count][0])
-                    if waitingTimeIndex == 0:
-                        exe_time = int(self.listedVal[count][1])
-                    end_time = exe_time + int(self.listedVal[count][2])
-                    self.waitingTime.append([])
-                    self.waitingTime[waitingTimeIndex].append(self.listedVal[count][0])
-                    self.waitingTime[waitingTimeIndex].append(exe_time - int(self.listedVal[count][1]))
-                    #print("Wating Time of ", self.waitingTime[waitingTimeIndex][0], " is ", self.waitingTime[waitingTimeIndex][1])
+            # if is there process arrive in current time then add it into queue
+            for row in range(allProcess):
+                if time == int(listedVal[row][1]): ## if there equal to queue
+                    queue.append([]) ## adding to queue
+                    queue[int(len(queue))-1].append(listedVal[row][0])
+                    queue[int(len(queue))-1].append(int(listedVal[row][1]))
+                    queue[int(len(queue))-1].append(int(listedVal[row][2]))
 
-                    self.TAT.append([])
-                    self.TAT[TATIndex].append(self.listedVal[count][0])
-                    self.TAT[TATIndex].append(int(self.waitingTime[waitingTimeIndex][1]) + int(self.listedVal[count][2]))
-                    #print("Turn Around Time of ", self.TAT[TATIndex][0], " is ", self.TAT[TATIndex][1])
+            # find the lowest burst time in queue then execute that
+            lowbt = 0
+            loopqueue = True
+            if int(len(queue)) > 0:
+                while loopqueue != False:
+                    rowbt = 0
+                    while rowbt < int(len(queue)):
+                        if int(queue[rowbt][2]) == lowbt:
+                            queue[rowbt][2] = int(queue[rowbt][2]) - 1 # subtract 1 burst time
+                            rowbt = int(len(queue))
+                            loopqueue = False
+                        rowbt +=1
+                    lowbt += 1
 
-                    #print("execution time: ", exe_time)
-                    
-                    exe_time = end_time
+                # deleting the process in queue if 0 burst time
+            qRow = 0
+            while qRow < int(len(queue)):
+                if int(queue[qRow][2]) <= 0: # if the process has 0 burst time, delete that process in queue
+                    for x in range (allProcess): # inputing the end time process
+                        if listedVal[x][0] == queue[qRow][0]:
+                            listedVal[x].append(time+1)
+                            numTerminate +=1
+                    queue.pop(qRow)
+                qRow += 1
 
-                    waitingTimeIndex += 1
-                    TATIndex += 1
-            if waitingTimeIndex == self.allProcess:
+            if numTerminate == allProcess:
                 loop = False
-            #print(i)
-            i += 1
 
-        self.AveWT = 0 # average wating time
-        self.AveTT = 0 # Total turn around time
+            time += 1
 
-        for i in range(len(self.waitingTime)):
-            self.AveWT += int(self.waitingTime[i][1])/3
-            self.AveTT += int(self.TAT[i][1])/3
+        for i in range(allProcess): #inputing the turn around time and waiting time
+            listedVal[i].append(int(listedVal[i][3]) - int(listedVal[i][1])) # End Time - Arrival Time
+            listedVal[i].append(int(listedVal[i][4]) - int(listedVal[i][2])) # Turn Around Time - Burst Time
+
+        self.aveTT = 0
+        self.aveWT = 0
+
+        for i in range(allProcess): #computing the average turn around time
+            self.aveWT += int(listedVal[i][5])/allProcess
+            self.aveTT += int(listedVal[i][4])/allProcess
+
+        #print("Average Waiting Time: ", "%.2f" %self.aveWT)
+        #print("Average Turn Around Time: ", "%.2f" %self.aveTT)
+
+        self.allProcessNew = allProcess
+        self.listedValNew = listedVal
 
     def resultTable(self):
-        self.rowResultTable = self.allProcess
-        self.columnResultTable = 5
+        self.rowResultTable = self.allProcessNew
+        self.columnResultTable = 6
         self.SRTFResultTable = QTableWidget(self.rowResultTable,self.columnResultTable,self)
         self.SRTFResultTable.setGeometry(QRect(100,50+100, 975, 350))
         self.SRTFResultTable.setFont(QtGui.QFont('Sanserif', 12))
 
-        self.SRTFResultTable.setHorizontalHeaderLabels(("Process ID", "Arrival Time", "Burst Time","Wating Time","Turn Around Time"))
-        self.SRTFResultTable.setColumnWidth(0,190)
-        self.SRTFResultTable.setColumnWidth(1,190)
-        self.SRTFResultTable.setColumnWidth(2,190)
-        self.SRTFResultTable.setColumnWidth(3,190)
-        self.SRTFResultTable.setColumnWidth(4,190)
+        self.SRTFResultTable.setHorizontalHeaderLabels(("Process ID", "Arrival Time", "Burst Time","End Time","Turn Around Time","Wating Time"))
+        self.SRTFResultTable.setColumnWidth(0,158)
+        self.SRTFResultTable.setColumnWidth(1,158)
+        self.SRTFResultTable.setColumnWidth(2,158)
+        self.SRTFResultTable.setColumnWidth(3,158)
+        self.SRTFResultTable.setColumnWidth(4,158)
+        self.SRTFResultTable.setColumnWidth(5,158)
 
         valIndex = 0
         for i in range(self.rowResultTable):
             for j in range(0,3):
-                self.SRTFResultTable.setItem(i,j,QTableWidgetItem(str(self.FCFS_valTables[valIndex])))
+                self.SRTFResultTable.setItem(i,j,QTableWidgetItem(str(self.SRTF_valTables[valIndex])))
                 valIndex += 1
 
-        for i in range(self.rowResultTable):
-            for j in range(self.rowResultTable):
-                if str(self.SRTFResultTable.item(i,0).text()) == str(self.waitingTime[j][0]):
-                    self.SRTFResultTable.setItem(i,3,QTableWidgetItem(str(self.waitingTime[j][1])))
-
-        for i in range(self.rowResultTable):
-            for j in range(self.rowResultTable):
-                if str(self.SRTFResultTable.item(i,0).text()) == str(self.TAT[j][0]):
-                    self.SRTFResultTable.setItem(i,4,QTableWidgetItem(str(self.TAT[j][1])))
+        for i in range(self.rowResultTable): # inputting the End time into table     
+            self.SRTFResultTable.setItem(i,3,QTableWidgetItem(str(self.listedValNew[i][3])))
+            self.SRTFResultTable.setItem(i,4,QTableWidgetItem(str(self.listedValNew[i][4])))
+            self.SRTFResultTable.setItem(i,5,QTableWidgetItem(str(self.listedValNew[i][5])))
             
-        self.AveWT = 0 # average wating time
-        self.AveTT = 0 # Total turn around time
-
-        for i in range(len(self.waitingTime)):
-            self.AveWT += int(self.waitingTime[i][1])/3
-            self.AveTT += int(self.TAT[i][1])/3
-
         self.aveWTLabel = QLabel(self)
         self.aveWTLabel.setGeometry(QRect(100,500, 900, 50))
         self.aveWTLabel.setStyleSheet("QWidget { color: Black}")
         self.aveWTLabel.setFont(QtGui.QFont('Sanserif', 13, QtGui.QFont.Bold))
-        self.aveWTLabel.setText("Average Waiting Time: " + str(self.AveWT))
+        self.aveWTLabel.setText("Average Waiting Time: " + "%.2f" %(self.aveWT))
 
         self.aveTTLabel = QLabel(self)
         self.aveTTLabel.setGeometry(QRect(100,500 + 25, 900, 50))
         self.aveTTLabel.setStyleSheet("QWidget { color: Black}")
         self.aveTTLabel.setFont(QtGui.QFont('Sanserif', 13, QtGui.QFont.Bold))
-        self.aveTTLabel.setText("Average Turn Around Time: " + str(self.AveTT))
+        self.aveTTLabel.setText("Average Turn Around Time: " + "%.2f" %(self.aveTT))
 
     def resultButtons(self):
         backButton = QPushButton('Back to SRTF', self)

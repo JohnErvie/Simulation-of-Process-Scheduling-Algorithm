@@ -348,8 +348,8 @@ class FCFS_ResultWin(QMainWindow):
         self.AveTT = 0 # Total turn around time
 
         for i in range(len(self.waitingTime)):
-            self.AveWT += int(self.waitingTime[i][1])/3
-            self.AveTT += int(self.TAT[i][1])/3
+            self.AveWT += int(self.waitingTime[i][1])/self.allProcess
+            self.AveTT += int(self.TAT[i][1])/self.allProcess
 
     def resultTable(self):
         self.rowResultTable = self.allProcess

@@ -84,7 +84,3 @@ while loop != False:
     checkqueue = 0
     time += 1
     print(queue)
-
-
-
-    
