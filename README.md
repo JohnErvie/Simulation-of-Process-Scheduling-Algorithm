@@ -1,17 +1,18 @@
 # Simulation-of-Process-Scheduling-Algorithm
 
 ### This is a Simulation of Process Scheduling Algorithm with pyqt5 based.
-Installing PyQt5 using pip 
 
-`python -m pip install pyqt5`
+#### Requirements
+PyQt5 - To install PyQt5 using pip, type the command below in cmd 
 
-#### Additional module:
-Installing numpy using pip
+`python -m pip install pyqt5` or `python3 -m pip install pyqt5`
 
-`python -m pip install numpy`
+numpy - To install numpy using pip, type the command below in cmd
 
-### To run the program
-`python main.py` or `python3 main.py`
+`python -m pip install numpy` or `python3 -m pip install numpy`
+
+### How to run the program 
+To run the program type `python main.py` or `python3 main.py` in cmd
 
 ## Group 2
 Ervie John Villareal
