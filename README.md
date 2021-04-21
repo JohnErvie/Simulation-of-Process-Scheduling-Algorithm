@@ -1,6 +1,6 @@
 # Simulation-of-Process-Scheduling-Algorithm
 
-### This is a Simulation of Process Scheduling Algorithm with pyqt5 based.
+### This is a Simulation of Process Scheduling Algorithm with pyqt5 based GUI.
 
 #### Requirements
 PyQt5 - To install PyQt5 using pip, type the command below in cmd 
