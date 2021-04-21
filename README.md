@@ -10,6 +10,9 @@ Installing numpy using pip
 
 `python -m pip install numpy`
 
+### To run the program
+`python main.py` or `python3 main.py`
+
 ## Group 2
 Ervie John Villareal
 
