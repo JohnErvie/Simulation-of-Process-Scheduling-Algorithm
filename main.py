@@ -12,6 +12,8 @@ from PyQt5.QtGui import QPixmap
 import FCFS
 import SRTF
 import RR
+import NPP
+import PP
 
 class processSchedWin(QMainWindow):
     def __init__(self):
@@ -58,20 +60,30 @@ class processSchedWin(QMainWindow):
         titleLabel.setFont(QtGui.QFont('Sanserif', 30, QtGui.QFont.Bold))
 
         FCFSButton = QPushButton('First Come First Serve', self)
-        FCFSButton.setGeometry(QRect(180,250, 270, 100))
+        FCFSButton.setGeometry(QRect(180+50,250, 270, 100))
         #FCFSButton.setStyleSheet("QWidget {background-color: Blue}")
         FCFSButton.setFont(QtGui.QFont('Times New Roman',14))
         FCFSButton.clicked.connect(self.clickedFCFS)
 
         SRTFButton = QPushButton('Shortest Remaining Time First', self)
-        SRTFButton.setGeometry(QRect(180,250 + 100+ 25, 270, 100))
+        SRTFButton.setGeometry(QRect(180+50,250 + 100+ 25, 270, 100))
         SRTFButton.setFont(QtGui.QFont('Times New Roman',12))
         SRTFButton.clicked.connect(self.clickedSRTF)
 
         RRButton = QPushButton('Round Robin', self)
-        RRButton.setGeometry(QRect(180,250 + 100+ 25 + 125, 270, 100))
+        RRButton.setGeometry(QRect(180+50,250 + 100+ 25 + 125, 270, 100))
         RRButton.setFont(QtGui.QFont('Times New Roman',14))
         RRButton.clicked.connect(self.clickedRR)
+
+        NPPButton = QPushButton('None Pre-emptive Priority', self)
+        NPPButton.setGeometry(QRect(180+500,250, 270, 100))
+        NPPButton.setFont(QtGui.QFont('Times New Roman',14))
+        NPPButton.clicked.connect(self.clickedNPP)
+
+        PPButton = QPushButton('Pre-emptive Priority', self)
+        PPButton.setGeometry(QRect(180+500,250 + 125, 270, 100))
+        PPButton.setFont(QtGui.QFont('Times New Roman',14))
+        PPButton.clicked.connect(self.clickedPP)
 
     def clickedFCFS(self):
         self._FCFSWin = FCFS.FCFSWin()
@@ -86,6 +98,16 @@ class processSchedWin(QMainWindow):
     def clickedRR(self):
         self._RR_Win = RR.RR_Win()
         self._RR_Win.show()
+        self.hide()
+
+    def clickedNPP(self):
+        self._NPPWin = NPP.NPPWin()
+        self._NPPWin.show()
+        self.hide()
+
+    def clickedPP(self):
+        self._PPWin = PP.PPWin()
+        self._PPWin.show()
         self.hide()
 
 if __name__ == "__main__":

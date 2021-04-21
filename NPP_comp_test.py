@@ -1,9 +1,9 @@
 values = ['p1', 3, 4, 2, 'p2', 5, 9, 1, 'p3', 8, 4, 2, 'p4', 0, 7, 1, 'p5', 12, 6, 1]
-lengthSRTF_valTables = len(values)
+lengthNPP_valTables = len(values)
 
 PP = 4
 
-allProcess = int(lengthSRTF_valTables/PP)
+allProcess = int(lengthNPP_valTables/PP)
 
 listedVal = []
 

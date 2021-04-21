@@ -12,13 +12,13 @@ import numpy as np
 #Other Win
 import main
 
-SRTF_values = []
+PP_values = []
 
-class SRTFWin(QMainWindow):
+class PPWin(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.title = "Shortest Remaining Time First"
+        self.title = "None Pre-emptive Priority"
         self.width = 1200
         self.height = 950
 
@@ -50,8 +50,8 @@ class SRTFWin(QMainWindow):
         self.move(qr.topLeft())
 
     def Labels(self):
-        titleLabel = QLabel("Shortest Remaining Time First", self)
-        titleLabel.setGeometry(QRect(30+150+25,50, 900, 100))
+        titleLabel = QLabel("Pre-emptive Priority", self)
+        titleLabel.setGeometry(QRect(30+150+80+50,50, 900, 100))
         titleLabel.setStyleSheet("QWidget { color: Black}")
         titleLabel.setFont(QtGui.QFont('Sanserif', 30, QtGui.QFont.Bold))
         
@@ -84,14 +84,15 @@ class SRTFWin(QMainWindow):
     
     def Table(self):
         self.row = 1
-        self.column = 3
-        self.SRTFTable = QTableWidget(self.row,self.column,self)
-        self.SRTFTable.setGeometry(QRect(100,50+100, 975, 650))
+        self.column = 4
+        self.PPTable = QTableWidget(self.row,self.column,self)
+        self.PPTable.setGeometry(QRect(100,50+100, 975, 650))
         
-        self.SRTFTable.setHorizontalHeaderLabels(("Process ID", "Arrival Time", "Burst Time"))
-        self.SRTFTable.setColumnWidth(0,316)
-        self.SRTFTable.setColumnWidth(1,316)
-        self.SRTFTable.setColumnWidth(2,316)
+        self.PPTable.setHorizontalHeaderLabels(("Process ID", "Arrival Time", "Burst Time", "Priority"))
+        self.PPTable.setColumnWidth(0,238)
+        self.PPTable.setColumnWidth(1,238)
+        self.PPTable.setColumnWidth(2,238)
+        self.PPTable.setColumnWidth(3,238)
 
         self.updateAddRow()
 
@@ -108,7 +109,7 @@ class SRTFWin(QMainWindow):
         self.animAddBtn.setEndValue(QRect(45,220 + self.addBtnHeight, 37, 37))
 
         
-        self.SRTFTable.insertRow(self.rowCount)
+        self.PPTable.insertRow(self.rowCount)
 
         self.deleteBtnHeight += 37
         self.animdelBtn = QPropertyAnimation(self.deleteButton, b"geometry")
@@ -120,8 +121,8 @@ class SRTFWin(QMainWindow):
         self.updateAddRow()
 
     def clickedDelete(self):
-        if self.SRTFTable.rowCount() > 0:
-            self.SRTFTable.removeRow(self.SRTFTable.rowCount()-1)
+        if self.PPTable.rowCount() > 0:
+            self.PPTable.removeRow(self.PPTable.rowCount()-1)
             
             self.addBtnHeight -= 37
             self.animAddBtn.start()
@@ -133,48 +134,48 @@ class SRTFWin(QMainWindow):
 
             #self.updateTableLineEdit()
 
-        if self.SRTFTable.rowCount() == 1:
+        if self.PPTable.rowCount() == 1:
             self.deleteButton.hide()
 
         self.updateDelRow()
 
     def updateAddRow(self):
-        self.rowCount = self.SRTFTable.rowCount()
+        self.rowCount = self.PPTable.rowCount()
         self.onlyInt = QIntValidator()
-        for i in range(1,3): 
+        for i in range(1,4): 
             self.tableLE = QLineEdit()
             self.tableLE.setFont(QtGui.QFont('Times New Roman',14))
             self.tableLE.setValidator(self.onlyInt)
-            self.SRTFTable.setCellWidget(self.SRTFTable.rowCount()-1, i, self.tableLE)
+            self.PPTable.setCellWidget(self.PPTable.rowCount()-1, i, self.tableLE)
         
-        if self.SRTFTable.rowCount() > 0:
-            for x in range(0,self.SRTFTable.rowCount()):
+        if self.PPTable.rowCount() > 0:
+            for x in range(0,self.PPTable.rowCount()):
                 self.tableLable = QLineEdit()
                 self.tableLable.setFont(QtGui.QFont('Times New Roman',14))
-                self.SRTFTable.setCellWidget(self.SRTFTable.rowCount()-1, 0, self.tableLable)
+                self.PPTable.setCellWidget(self.PPTable.rowCount()-1, 0, self.tableLable)
 
     def updateDelRow(self):
-        self.rowCount = self.SRTFTable.rowCount()
+        self.rowCount = self.PPTable.rowCount()
         self.onlyInt = QIntValidator()
         for i in range(1,3): 
             self.tableLE = QLineEdit()
             self.tableLE.setFont(QtGui.QFont('Times New Roman',14))
             self.tableLE.setValidator(self.onlyInt)
-            self.SRTFTable.setCellWidget(self.SRTFTable.rowCount(), i, self.tableLE)
+            self.PPTable.setCellWidget(self.PPTable.rowCount(), i, self.tableLE)
         
-        if self.SRTFTable.rowCount() > 0:
-            for x in range(0,self.SRTFTable.rowCount()):
+        if self.PPTable.rowCount() > 0:
+            for x in range(0,self.PPTable.rowCount()):
                 self.tableLable = QLineEdit()
                 self.tableLable.setFont(QtGui.QFont('Times New Roman',14))
-                self.SRTFTable.setCellWidget(self.SRTFTable.rowCount(), 0, self.tableLable)
+                self.PPTable.setCellWidget(self.PPTable.rowCount(), 0, self.tableLable)
 
     def _clickedCal(self):
         self.valTables = []
         
         for row in range(0,self.rowCount):
             col_index = 0
-            for col in range(0,3):
-                item = self.SRTFTable.cellWidget(row, col)
+            for col in range(0,4):
+                item = self.PPTable.cellWidget(row, col)
                 item_text = item.text()
                 if col_index > 0:
                     if item_text == '':
@@ -214,20 +215,20 @@ class SRTFWin(QMainWindow):
             msgPID = QMessageBox(self)
             msgPID.setIcon(QMessageBox.Information)
             msgPID.setText("Error: Same process ID")
-            msgPID.setInformativeText("There are the same process ID, Please check it.")
+            msgPID.setInformativeText("There is/are the same process ID, Please check it.")
             msgPID.setWindowTitle("Error")
             msgPID.setStandardButtons(QMessageBox.Ok)
             msgPID.show()
 
         else:
-            global SRTF_values
-            SRTF_values = self.valTables
-            self._SRTF_ResultWin = SRTF_ResultWin()
-            self._SRTF_ResultWin.show()
+            global PP_values
+            PP_values = self.valTables
+            self._PP_ResultWin = PP_ResultWin()
+            self._PP_ResultWin.show()
             self.hide()
 
-# SRTF Result Window
-class SRTF_ResultWin(QMainWindow):
+# PP Result Window
+class PP_ResultWin(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -270,14 +271,13 @@ class SRTF_ResultWin(QMainWindow):
         titleResultLabel.setFont(QtGui.QFont('Sanserif', 30, QtGui.QFont.Bold))
 
     def variables(self):
-        global SRTF_values
-        self.SRTF_valTables = SRTF_values
-        lengthSRTF_valTables = len(self.SRTF_valTables)
+        global PP_values
+        self.PP_valTables = PP_values
+        lengthPP_valTables = len(self.PP_valTables)
 
-        values = self.SRTF_valTables
-        lengthSRTF_valTables = len(values)
+        PP = 4
 
-        allProcess = int(lengthSRTF_valTables/3)
+        allProcess = int(lengthPP_valTables/PP)
 
         listedVal = []
 
@@ -286,25 +286,21 @@ class SRTF_ResultWin(QMainWindow):
 
         indexVal = 0
         for row in range(allProcess): # Converting the values to 2d array
-            for col in range(3):
-                listedVal[row].append(values[indexVal])
+            for col in range(PP):
+                listedVal[row].append(self.PP_valTables[indexVal])
                 indexVal += 1
 
-        endAllProcess = 0
-        for i in range(allProcess):
-            endAllProcess += int(listedVal[i][1]) + int(listedVal[i][2])
-
-        time = 0
-        lowbt = 0
+        totalEndTime = 0
         queue = []
         loopqueue = True
-        loopbt = True
+        samePriority = []
+        sameBurstTime = []
 
-        totalEndTime = 0
         numTerminate = 0
 
+        time = 0
         loop = True
-        while loop != False:
+        while loop != False: 
             # if is there process arrive in current time then add it into queue
             for row in range(allProcess):
                 if time == int(listedVal[row][1]): ## if there equal to time
@@ -312,46 +308,93 @@ class SRTF_ResultWin(QMainWindow):
                     queue[int(len(queue))-1].append(listedVal[row][0])
                     queue[int(len(queue))-1].append(int(listedVal[row][1]))
                     queue[int(len(queue))-1].append(int(listedVal[row][2]))
+                    queue[int(len(queue))-1].append(int(listedVal[row][3]))
 
-            # find the lowest burst time in queue then execute that
-            lowbt = 0
-            loopqueue = True
+            # find the lowest priority in queue
             if int(len(queue)) > 0:
-                while loopqueue != False:
-                    rowbt = 0
-                    while rowbt < int(len(queue)):
-                        if int(queue[rowbt][2]) == lowbt:
-                            queue[rowbt][2] = int(queue[rowbt][2]) - 1 # subtract 1 burst time
-                            rowbt = int(len(queue))
-                            loopqueue = False
-                        rowbt +=1
-                    lowbt += 1
+                if int(len(queue)) > 1 : # if more than 1 in queue check the lowest priority
+                    lowP = 0
+                    loopqueue = True
+                    while loopqueue != False:
+                        rowP = 0
+                        while rowP < int(len(queue)):
+                            if int(queue[rowP][3]) == lowP:
+                                samePriority.append(rowP)
+                                loopqueue = False
+                            rowP +=1
+                        lowP += 1
 
-                # deleting the process in queue if 0 burst time
+                    # if there are the same priority
+                    if int(len(samePriority)) > 1:
+                        lowbt = 0
+                        loopqueue = True
+                        while loopqueue != False:
+                            rowbt = 0
+                            while rowbt < int(len(samePriority)):
+                                if int(queue[int(samePriority[rowbt])][2]) == lowbt:
+                                    sameBurstTime.append(samePriority[rowbt]) # add the row into burst time
+                                    loopqueue = False
+                                rowbt +=1
+                            lowbt += 1
+
+                        # then if there are the same burst time
+                        if int(len(sameBurstTime)) > 1:
+                            lowat = 0
+                            loopqueue = True
+                            while loopqueue != False:
+                                rowat = 0
+                                while rowat < int(len(sameBurstTime)):
+                                    if int(queue[int(sameBurstTime[rowat])][1]) == lowat:
+                                        queue[int(sameBurstTime[rowat])][2] = int(queue[int(sameBurstTime[rowat])][2]) - 1 # subtract 1 burst time
+                                        rowat = int(len(queue))
+                                        loopqueue = False
+                                    rowat +=1
+                                lowat += 1
+
+                        else: 
+                            queue[int(sameBurstTime[0])][2] = int(queue[int(sameBurstTime[0])][2]) - 1
+                    
+                    else:
+                        queue[int(samePriority[0])][2] = int(queue[int(samePriority[0])][2]) - 1
+                    
+                else: # if only 1 process in queue then execute it
+                    queue[0][2] = int(queue[0][2]) - 1 # subtract 1 burst time
+
+                #print(sameBurstTime)
+                samePriority.clear()
+                sameBurstTime.clear()
+
+            # deleting the 0 burst time in queue
             qRow = 0
             while qRow < int(len(queue)):
                 if int(queue[qRow][2]) <= 0: # if the process has 0 burst time, delete that process in queue
                     for x in range (allProcess): # inputing the end time process
-                        if listedVal[x][0] == queue[qRow][0]:
+                        if listedVal[x][0] == queue[qRow][0]: # if process id is same as in queue, then input it in specific process
                             listedVal[x].append(time+1)
                             numTerminate +=1
                     queue.pop(qRow)
                 qRow += 1
 
             if numTerminate == allProcess:
-                totalEndTime = time + 1
+                totalEndTime = time+1
                 loop = False
 
             time += 1
+            #print(time)
+            #print(queue)
+
 
         for i in range(allProcess): #inputing the turn around time and waiting time
-            listedVal[i].append(int(listedVal[i][3]) - int(listedVal[i][1])) # End Time - Arrival Time
-            listedVal[i].append(int(listedVal[i][4]) - int(listedVal[i][2])) # Turn Around Time - Burst Time
+            listedVal[i].append(int(listedVal[i][4]) - int(listedVal[i][1])) # End Time - Arrival Time
+            listedVal[i].append(int(listedVal[i][5]) - int(listedVal[i][2])) # Turn Around Time - Burst Time
+
+        #print(listedVal)
+
 
         self.cpuUtil = 0
+        totalBurstTime = 0
         self.aveTT = 0
         self.aveWT = 0
-        totalBurstTime = 0
 
         for i in range(allProcess): #computing the Cpu Utilization
             totalBurstTime += int(listedVal[i][2])
@@ -360,8 +403,9 @@ class SRTF_ResultWin(QMainWindow):
 
         for i in range(allProcess): #computing the average turn around time
             self.aveWT += int(listedVal[i][5])/allProcess
-            self.aveTT += int(listedVal[i][4])/allProcess
+            self.aveTT += int(listedVal[i][6])/allProcess
 
+        #print("CPU Utilization: ", "%.2f" %self.cpuUtil)
         #print("Average Waiting Time: ", "%.2f" %self.aveWT)
         #print("Average Turn Around Time: ", "%.2f" %self.aveTT)
 
@@ -370,18 +414,19 @@ class SRTF_ResultWin(QMainWindow):
 
     def resultTable(self):
         self.rowResultTable = self.allProcessNew
-        self.columnResultTable = 6
+        self.columnResultTable = 7
         self.SRTFResultTable = QTableWidget(self.rowResultTable,self.columnResultTable,self)
         self.SRTFResultTable.setGeometry(QRect(100,50+100, 975, 350))
         self.SRTFResultTable.setFont(QtGui.QFont('Sanserif', 12))
 
-        self.SRTFResultTable.setHorizontalHeaderLabels(("Process ID", "Arrival Time", "Burst Time","End Time","Turn Around Time","Wating Time"))
-        self.SRTFResultTable.setColumnWidth(0,158)
-        self.SRTFResultTable.setColumnWidth(1,158)
-        self.SRTFResultTable.setColumnWidth(2,158)
-        self.SRTFResultTable.setColumnWidth(3,158)
-        self.SRTFResultTable.setColumnWidth(4,158)
-        self.SRTFResultTable.setColumnWidth(5,158)
+        self.SRTFResultTable.setHorizontalHeaderLabels(("Process ID", "Arrival Time", "Burst Time", "Priority","End Time","Turn Around Time","Wating Time"))
+        self.SRTFResultTable.setColumnWidth(0,136)
+        self.SRTFResultTable.setColumnWidth(1,136)
+        self.SRTFResultTable.setColumnWidth(2,136)
+        self.SRTFResultTable.setColumnWidth(3,136)
+        self.SRTFResultTable.setColumnWidth(4,136)
+        self.SRTFResultTable.setColumnWidth(5,136)
+        self.SRTFResultTable.setColumnWidth(6,136)
 
         for i in range(self.rowResultTable): # inputting the End time into table
             self.SRTFResultTable.setItem(i,0,QTableWidgetItem(str(self.listedValNew[i][0])))
@@ -390,6 +435,7 @@ class SRTF_ResultWin(QMainWindow):
             self.SRTFResultTable.setItem(i,3,QTableWidgetItem(str(self.listedValNew[i][3])))
             self.SRTFResultTable.setItem(i,4,QTableWidgetItem(str(self.listedValNew[i][4])))
             self.SRTFResultTable.setItem(i,5,QTableWidgetItem(str(self.listedValNew[i][5])))
+            self.SRTFResultTable.setItem(i,6,QTableWidgetItem(str(self.listedValNew[i][6])))
             
         self.aveWTLabel = QLabel(self)
         self.aveWTLabel.setGeometry(QRect(100,500, 900, 50))
@@ -410,7 +456,7 @@ class SRTF_ResultWin(QMainWindow):
         self.CPUUtilLabel.setText("CPU Utilization: " + "%.0f" %(self.cpuUtil) + "%")
 
     def resultButtons(self):
-        backButton = QPushButton('Back to SRTF', self)
+        backButton = QPushButton('Back to PP', self)
         backButton.setGeometry(QRect(150,850, 150, 50))
         #backButton.setStyleSheet("QWidget {background-color: Blue}")
         backButton.setFont(QtGui.QFont('Times New Roman',14))
@@ -422,8 +468,8 @@ class SRTF_ResultWin(QMainWindow):
         calButton.clicked.connect(self.clickedMainMenu)
 
     def clickedBack(self):
-        self._SRTFWin = SRTFWin()
-        self._SRTFWin.show()
+        self._PPWin = PPWin()
+        self._PPWin.show()
         self.hide()
 
     def clickedMainMenu(self):
@@ -433,5 +479,5 @@ class SRTF_ResultWin(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    ex = SRTFWin()
+    ex = PPWin()
     sys.exit(app.exec_())
