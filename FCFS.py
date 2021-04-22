@@ -269,6 +269,7 @@ class FCFS_ResultWin(QMainWindow):
         self.totalEndTime = 0
         self.queue = []
 
+        self.totalUsedTime = 0
         self.totalBurstTime = 0
         for i in range(self.allProcess): #computing the Cpu Utilization
             self.totalBurstTime += int(self.listedVal[i][2])
@@ -414,7 +415,7 @@ class FCFS_ResultWin(QMainWindow):
         timer.timeout.connect(self.variables)
 
         # update the timer every second
-        timer.start(500)
+        timer.start(1000)
         
     def variables(self):
         
@@ -437,6 +438,7 @@ class FCFS_ResultWin(QMainWindow):
                         if int(self.queue[rowbt][1]) == lowbt:
                             self.queue[rowbt][2] = int(self.queue[rowbt][2]) - 1 # subtract 1 burst time
                             self.currentJob = self.queue[rowbt][0]
+                            self.totalUsedTime += 1
                             rowbt = int(len(self.queue))
                             loopqueue = False
                         rowbt +=1
@@ -467,19 +469,19 @@ class FCFS_ResultWin(QMainWindow):
             self.allProcessNew = self.allProcess
             self.listedValNew = self.listedVal
 
-            self.updateResults()
-
-
-            if self.numTerminate != self.allProcess:
-                self.timeCount += 1
-
             # getting the highest end time
             self.totalEndTime = max(l[3] for l in self.listedVal)
 
-            if self.totalEndTime > 0:
-                self.cpuUtil = (self.totalEndTime/self.totalBurstTime)*100 # formula for Cpu Utilization
+            print(self.totalUsedTime)
+            print(self.timeCount)
 
-            self.totalEndTime = 0 # reset the end time Count
+            if self.timeCount > 0:
+                self.cpuUtil = (self.totalUsedTime/(self.timeCount+1))*100 # formula for Cpu Utilization
+
+            #if self.numTerminate != self.allProcess:
+            self.timeCount += 1
+
+            self.updateResults()
 
             if self.numTerminate == self.allProcess:
                 #Donemsg = QMessageBox(self)
@@ -504,7 +506,7 @@ class FCFS_ResultWin(QMainWindow):
         self.currentJobResLabel.setText(str(self.currentJob))
         self.aveWTLabel.setText("%.2f" %(self.aveWT))
         self.aveTTLabel.setText("%.2f" %(self.aveTT))
-        self.CPUUtilLabel.setText("%.0f" %(self.cpuUtil) + "%")
+        self.CPUUtilLabel.setText("%.2f" %(self.cpuUtil) + "%")
         self.currentTimeLabel.setText(str(self.timeCount))
 
     def clickedBackFCFS(self):
