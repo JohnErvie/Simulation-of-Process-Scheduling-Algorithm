@@ -186,8 +186,11 @@ class FCFSWin(QMainWindow):
                         self.valTables.append(int(item_text))
                 else:
                     self.valTables.append(item_text)
-                    
+  
                 col_index += 1
+
+            for i in range(3):
+                    self.valTables.append(0)
 
         self.lengthVal = len(self.valTables)
 
@@ -196,7 +199,7 @@ class FCFSWin(QMainWindow):
         i = 0 # PID starts with 0 index
         while i < self.lengthVal:
             processID.append(self.valTables[i])
-            i += 3
+            i += 6
 
         emptyCount = 0
         for i in range(self.lengthVal):
@@ -235,8 +238,48 @@ class FCFS_ResultWin(QMainWindow):
         super().__init__()
 
         self.title = "First Come First Serve Result"
+        
         self.width = 1200
         self.height = 950
+
+        #self.setStyleSheet("background-color: black;")
+
+        ## Initializing variables
+        global FCFS_values
+        self.FCFS_valTables = FCFS_values
+        self.values = self.FCFS_valTables
+        self.lengthFCFS_valTables = len(self.values)
+
+        self.allProcess = int(self.lengthFCFS_valTables/6)
+
+        self.listedVal = []
+
+        for i in range(self.allProcess): # adding 2d array
+            self.listedVal.append([])
+
+        self.indexVal = 0
+        for row in range(self.allProcess): # Converting the values to 2d array
+            for col in range(6):
+                self.listedVal[row].append(self.values[self.indexVal])
+                self.indexVal += 1
+
+        self.currentJob = ""
+
+        self.SimulationSpeed = 1
+        self.totalEndTime = 0
+        self.queue = []
+
+        self.totalBurstTime = 0
+        for i in range(self.allProcess): #computing the Cpu Utilization
+            self.totalBurstTime += int(self.listedVal[i][2])
+
+        self.cpuUtil = 0
+        self.aveTT = 0
+        self.aveWT = 0
+
+        self.numTerminate = 0
+
+        self.timeCount = 0
 
         self.initWindow()
 
@@ -245,10 +288,11 @@ class FCFS_ResultWin(QMainWindow):
         self.setWindowTitle(self.title)
         self.center()
 
-        self.variables()
         self.resultLabels()
-        self.resultTable()
         self.resultButtons()
+        self.resultWidgetInit()
+        self.Timer()
+        self.Design()
 
         self.show()
 
@@ -269,146 +313,10 @@ class FCFS_ResultWin(QMainWindow):
         #print(self.FCFS_valTables)
 
     def resultLabels(self):
-        titleResultLabel = QLabel("Result", self)
-        titleResultLabel.setGeometry(QRect(30+125+350,50, 900, 100))
+        titleResultLabel = QLabel("Job Pool", self)
+        titleResultLabel.setGeometry(QRect(30+130+350,50, 900, 100))
         titleResultLabel.setStyleSheet("QWidget { color: Black}")
-        titleResultLabel.setFont(QtGui.QFont('Sanserif', 30, QtGui.QFont.Bold))
-
-    def variables(self):
-        global FCFS_values
-        self.FCFS_valTables = FCFS_values
-        values = self.FCFS_valTables
-        lengthFCFS_valTables = len(values)
-
-        allProcess = int(lengthFCFS_valTables/3)
-
-        listedVal = []
-
-        for i in range(allProcess): # adding 2d array
-            listedVal.append([])
-
-        indexVal = 0
-        for row in range(allProcess): # Converting the values to 2d array
-            for col in range(3):
-                listedVal[row].append(values[indexVal])
-                indexVal += 1
-
-        totalEndTime = 0
-        queue = []
-        lowbt = 0
-        loopqueue = True
-
-        numTerminate = 0
-
-        time = 0
-        loop = True
-        while loop != False: 
-            # if is there process arrive in current time then add it into queue
-            for row in range(allProcess):
-                if time == int(listedVal[row][1]): ## if there equal to time
-                    queue.append([]) ## adding to queue
-                    queue[int(len(queue))-1].append(listedVal[row][0])
-                    queue[int(len(queue))-1].append(int(listedVal[row][1]))
-                    queue[int(len(queue))-1].append(int(listedVal[row][2]))
-
-            # find the lowest arrival time in queue then execute that
-            lowbt = 0
-            loopqueue = True
-            if int(len(queue)) > 0:
-                while loopqueue != False:
-                    rowbt = 0
-                    while rowbt < int(len(queue)):
-                        if int(queue[rowbt][1]) == lowbt:
-                            queue[rowbt][2] = int(queue[rowbt][2]) - 1 # subtract 1 burst time
-                            rowbt = int(len(queue))
-                            loopqueue = False
-                        rowbt +=1
-                    lowbt += 1
-
-            qRow = 0
-            while qRow < int(len(queue)):
-                if int(queue[qRow][2]) <= 0: # if the process has 0 burst time, delete that process in queue
-                    for x in range (allProcess): # inputing the end time process
-                        if listedVal[x][0] == queue[qRow][0]: # if process id is same as in queue, then input it in specific process
-                            listedVal[x].append(time+1)
-                            numTerminate +=1
-                    queue.pop(qRow)
-                qRow += 1
-
-            if numTerminate == allProcess:
-                totalEndTime = time + 1
-                loop = False
-
-            time += 1
-
-        for i in range(allProcess): #inputing the turn around time and waiting time
-            listedVal[i].append(int(listedVal[i][3]) - int(listedVal[i][1])) # End Time - Arrival Time
-            listedVal[i].append(int(listedVal[i][4]) - int(listedVal[i][2])) # Turn Around Time - Burst Time
-
-        #print(listedVal)
-
-
-        self.cpuUtil = 0
-        totalBurstTime = 0
-        self.aveTT = 0
-        self.aveWT = 0
-
-        for i in range(allProcess): #computing the Cpu Utilization
-            totalBurstTime += int(listedVal[i][2])
-
-        self.cpuUtil = (totalBurstTime/totalEndTime)*100 # formula for Cpu Utilization
-
-        for i in range(allProcess): #computing the average turn around time
-            self.aveWT += int(listedVal[i][5])/allProcess
-            self.aveTT += int(listedVal[i][4])/allProcess
-
-        #print("CPU Utilization: ", "%.2f" %self.cpuUtil)
-        #print("Average Waiting Time: ", "%.2f" %self.aveWT)
-        #print("Average Turn Around Time: ", "%.2f" %self.aveTT)
-
-        self.allProcessNew = allProcess
-        self.listedValNew = listedVal
-
-    def resultTable(self):
-        self.rowResultTable = self.allProcessNew
-        self.columnResultTable = 6
-        self.FCFSResultTable = QTableWidget(self.rowResultTable,self.columnResultTable,self)
-        self.FCFSResultTable.setGeometry(QRect(100,50+100, 975, 350))
-        self.FCFSResultTable.setFont(QtGui.QFont('Sanserif', 12))
-
-        self.FCFSResultTable.setHorizontalHeaderLabels(("Process ID", "Arrival Time", "Burst Time", "End Time", "Turn Around Time", "Wating Time"))
-        self.FCFSResultTable.setColumnWidth(0,158)
-        self.FCFSResultTable.setColumnWidth(1,158)
-        self.FCFSResultTable.setColumnWidth(2,158)
-        self.FCFSResultTable.setColumnWidth(3,158)
-        self.FCFSResultTable.setColumnWidth(4,158)
-        self.FCFSResultTable.setColumnWidth(5,158)
-
-        for i in range(self.rowResultTable): # inputting the End time into table
-            self.FCFSResultTable.setItem(i,0,QTableWidgetItem(str(self.listedValNew[i][0])))
-            self.FCFSResultTable.setItem(i,1,QTableWidgetItem(str(self.listedValNew[i][1])))
-            self.FCFSResultTable.setItem(i,2,QTableWidgetItem(str(self.listedValNew[i][2])))
-            self.FCFSResultTable.setItem(i,3,QTableWidgetItem(str(self.listedValNew[i][3])))
-            self.FCFSResultTable.setItem(i,4,QTableWidgetItem(str(self.listedValNew[i][4])))
-            self.FCFSResultTable.setItem(i,5,QTableWidgetItem(str(self.listedValNew[i][5])))
-
-        self.aveWTLabel = QLabel(self)
-        self.aveWTLabel.setGeometry(QRect(100,500, 900, 50))
-        self.aveWTLabel.setStyleSheet("QWidget { color: Black}")
-        self.aveWTLabel.setFont(QtGui.QFont('Sanserif', 13, QtGui.QFont.Bold))
-        self.aveWTLabel.setText("Average Waiting Time: " + "%.2f" %(self.aveWT))
-
-        self.aveTTLabel = QLabel(self)
-        self.aveTTLabel.setGeometry(QRect(100,500 + 25, 900, 50))
-        self.aveTTLabel.setStyleSheet("QWidget { color: Black}")
-        self.aveTTLabel.setFont(QtGui.QFont('Sanserif', 13, QtGui.QFont.Bold))
-        self.aveTTLabel.setText("Average Turn Around Time: " + "%.2f" %(self.aveTT))
-
-        self.CPUUtilLabel = QLabel(self)
-        self.CPUUtilLabel.setGeometry(QRect(100,500 + 25 + 25, 900, 50))
-        self.CPUUtilLabel.setStyleSheet("QWidget { color: Black}")
-        self.CPUUtilLabel.setFont(QtGui.QFont('Sanserif', 13, QtGui.QFont.Bold))
-        self.CPUUtilLabel.setText("CPU Utilization: " + "%.0f" %(self.cpuUtil) + "%")
+        titleResultLabel.setFont(QtGui.QFont('Sanserif', 20, QtGui.QFont.Bold))
 
     def resultButtons(self):
         backButton = QPushButton('Back to FCFS', self)
@@ -422,6 +330,183 @@ class FCFS_ResultWin(QMainWindow):
         calButton.setFont(QtGui.QFont('Times New Roman',14))
         calButton.clicked.connect(self.clickedMainMenu)
 
+    def resultWidgetInit(self):
+        self.rowResultTable = self.allProcess
+        self.columnResultTable = 6
+        self.FCFSResultTable = QTableWidget(self.rowResultTable,self.columnResultTable,self)
+        self.FCFSResultTable.setGeometry(QRect(100,50+100, 975, 217))
+        self.FCFSResultTable.setFont(QtGui.QFont('Sanserif', 12))
+        #self.FCFSResultTable.setStyleSheet("color: black;background-color: white;")
+
+        self.FCFSResultTable.setHorizontalHeaderLabels(("Process ID", "Arrival Time", "Burst Time", "End Time", "Turn Around Time", "Wating Time"))
+        self.FCFSResultTable.setColumnWidth(0,158)
+        self.FCFSResultTable.setColumnWidth(1,158)
+        self.FCFSResultTable.setColumnWidth(2,158)
+        self.FCFSResultTable.setColumnWidth(3,158)
+        self.FCFSResultTable.setColumnWidth(4,158)
+        self.FCFSResultTable.setColumnWidth(5,158)
+
+        self.currentJobResLabel = QLabel(self)
+        self.currentJobResLabel.setGeometry(QRect(100+300+20,225 + 175 + 40 + 50, 150, 50))
+        self.currentJobResLabel.setFont(QtGui.QFont('Sanserif', 12, QtGui.QFont.Bold))
+
+        self.aveWTLabel = QLabel(self)
+        self.aveWTLabel.setGeometry(QRect(100+300+105+115+170+27,225 + 175 + 40+ 50, 150, 50))
+        #self.aveWTLabel.setStyleSheet("QWidget { color: Green}")
+        self.aveWTLabel.setFont(QtGui.QFont('Sanserif', 12, QtGui.QFont.Bold))
+
+        self.aveTTLabel = QLabel(self)
+        self.aveTTLabel.setGeometry(QRect(100+300+105+115+170+27+130+13,225 + 175 + 40+ 50, 150, 50))
+        self.aveTTLabel.setFont(QtGui.QFont('Sanserif', 12, QtGui.QFont.Bold))
+        
+        self.CPUUtilLabel = QLabel(self)
+        self.CPUUtilLabel.setGeometry(QRect(100+300+105+115+25,225 + 175 + 40 + 50, 150, 50))
+        self.CPUUtilLabel.setFont(QtGui.QFont('Sanserif', 12, QtGui.QFont.Bold))
+
+        self.currentTimeLabel = QLabel(self)
+        self.currentTimeLabel.setGeometry(QRect(100+300+105+38,225 + 175 + 40 + 50, 150, 50))
+        self.currentTimeLabel.setFont(QtGui.QFont('Sanserif', 12, QtGui.QFont.Bold))
+
+    def Design(self):
+        self.queueLabel = QLabel("Ready Queue", self)
+        self.queueLabel.setGeometry(QRect(100,225 + 175, 150, 50))
+        self.queueLabel.setFont(QtGui.QFont('Sanserif', 13, QtGui.QFont.Bold))
+
+        self.cpuLabel = QLabel("CPU", self)
+        self.cpuLabel.setGeometry(QRect(100+300,225 + 175, 150, 50))
+        self.cpuLabel.setFont(QtGui.QFont('Sanserif', 13, QtGui.QFont.Bold))
+
+        self.currentJobLabel = QLabel("Current Job", self)
+        self.currentJobLabel.setGeometry(QRect(100+300,225 + 175 + 40, 150, 50))
+        self.currentJobLabel.setFont(QtGui.QFont('Sanserif', 11))
+
+        self.currentTimeLlbl = QLabel("Current Time", self)
+        self.currentTimeLlbl.setGeometry(QRect(100+300+105,225 + 175 + 40, 150, 50))
+        self.currentTimeLlbl.setFont(QtGui.QFont('Sanserif', 11))
+
+        self.cpuUtilLlbl = QLabel("CPU Utilization", self)
+        self.cpuUtilLlbl.setGeometry(QRect(100+300+105+115,225 + 175 + 40, 150, 50))
+        self.cpuUtilLlbl.setFont(QtGui.QFont('Sanserif', 11))
+
+        self.AveLabel = QLabel("Average", self)
+        self.AveLabel.setGeometry(QRect(100+300+105+115+170,225 + 175, 150, 50))
+        self.AveLabel.setFont(QtGui.QFont('Sanserif', 13, QtGui.QFont.Bold))
+
+        self.aveWaitingTimelbl = QLabel("Waiting Time", self)
+        self.aveWaitingTimelbl.setGeometry(QRect(100+300+105+115+170,225 + 175 + 40, 150, 50))
+        self.aveWaitingTimelbl.setFont(QtGui.QFont('Sanserif', 11))
+
+        self.aveTATimelbl = QLabel("Turn Around Time", self)
+        self.aveTATimelbl.setGeometry(QRect(100+300+105+115+170+130,225 + 175 + 40, 150, 50))
+        self.aveTATimelbl.setFont(QtGui.QFont('Sanserif', 11))
+
+        self.ganttChartLabel = QLabel("Gantt Chart", self)
+        self.ganttChartLabel.setGeometry(QRect(100,225 + 175 + 170, 150, 50))
+        self.ganttChartLabel.setFont(QtGui.QFont('Sanserif', 15, QtGui.QFont.Bold))
+
+    def Timer(self):
+        self.start = True
+
+        # creating a timer object
+        timer = QTimer(self)
+
+        # adding action to timer
+        timer.timeout.connect(self.variables)
+
+        # update the timer every second
+        timer.start(500)
+        
+    def variables(self):
+        
+        if self.start:
+            # if is there process arrive in current time then add it into queue
+            for row in range(self.allProcess):
+                if self.timeCount == int(self.listedVal[row][1]): ## if there equal to time
+                    self.queue.append([]) ## adding to queue
+                    self.queue[int(len(self.queue))-1].append(self.listedVal[row][0])
+                    self.queue[int(len(self.queue))-1].append(int(self.listedVal[row][1]))
+                    self.queue[int(len(self.queue))-1].append(int(self.listedVal[row][2]))
+
+            # find the lowest arrival time in queue then execute that
+            lowbt = 0
+            loopqueue = True
+            if int(len(self.queue)) > 0:
+                while loopqueue != False:
+                    rowbt = 0
+                    while rowbt < int(len(self.queue)):
+                        if int(self.queue[rowbt][1]) == lowbt:
+                            self.queue[rowbt][2] = int(self.queue[rowbt][2]) - 1 # subtract 1 burst time
+                            self.currentJob = self.queue[rowbt][0]
+                            rowbt = int(len(self.queue))
+                            loopqueue = False
+                        rowbt +=1
+                    lowbt += 1
+
+            qRow = 0
+            while qRow < int(len(self.queue)):
+                if int(self.queue[qRow][2]) <= 0: # if the process has 0 burst time, delete that process in queue
+                    for x in range (self.allProcess): # inputing the end time process
+                        if self.listedVal[x][0] == self.queue[qRow][0]: # if process id is same as in queue, then input it in specific process
+                            self.listedVal[x][3] = self.timeCount + 1
+                            self.listedVal[x][4] = int(self.listedVal[x][3]) - int(self.listedVal[x][1]) # Turn around time = End Time - Arrival Time
+                            self.listedVal[x][5] = int(self.listedVal[x][4]) - int(self.listedVal[x][2]) # waiting time = Turn Around Time - Burst Time
+                            self.numTerminate +=1
+                    self.queue.pop(qRow)
+                qRow += 1
+
+            ### updating the values
+            totalWaitingTime = 0
+            totalTurnAroundTime = 0
+            for i in range(self.allProcess): #computing the average turn around time
+                totalWaitingTime += int(self.listedVal[i][5])
+                totalTurnAroundTime += int(self.listedVal[i][4])
+            
+            self.aveWT = totalWaitingTime/self.allProcess
+            self.aveTT = totalTurnAroundTime/self.allProcess
+
+            self.allProcessNew = self.allProcess
+            self.listedValNew = self.listedVal
+
+            self.updateResults()
+
+
+            if self.numTerminate != self.allProcess:
+                self.timeCount += 1
+
+            # getting the highest end time
+            self.totalEndTime = max(l[3] for l in self.listedVal)
+
+            if self.totalEndTime > 0:
+                self.cpuUtil = (self.totalEndTime/self.totalBurstTime)*100 # formula for Cpu Utilization
+
+            self.totalEndTime = 0 # reset the end time Count
+
+            if self.numTerminate == self.allProcess:
+                #Donemsg = QMessageBox(self)
+                #Donemsg.setIcon(QMessageBox.Information)
+                #Donemsg.setInformativeText("The process are done!")
+                #Donemsg.setWindowTitle("Done")
+                #Donemsg.setStandardButtons(QMessageBox.Ok)
+                #Donemsg.show()
+                self.start = False # pause the timer
+            #loop = False
+
+    # update the table
+    def updateResults(self):
+        for i in range(self.rowResultTable): # inputting the End time into table
+            self.FCFSResultTable.setItem(i,0,QTableWidgetItem(str(self.listedValNew[i][0])))
+            self.FCFSResultTable.setItem(i,1,QTableWidgetItem(str(self.listedValNew[i][1])))
+            self.FCFSResultTable.setItem(i,2,QTableWidgetItem(str(self.listedValNew[i][2])))
+            self.FCFSResultTable.setItem(i,3,QTableWidgetItem(str(self.listedValNew[i][3])))
+            self.FCFSResultTable.setItem(i,4,QTableWidgetItem(str(self.listedValNew[i][4])))
+            self.FCFSResultTable.setItem(i,5,QTableWidgetItem(str(self.listedValNew[i][5])))
+
+        self.currentJobResLabel.setText(str(self.currentJob))
+        self.aveWTLabel.setText("%.2f" %(self.aveWT))
+        self.aveTTLabel.setText("%.2f" %(self.aveTT))
+        self.CPUUtilLabel.setText("%.0f" %(self.cpuUtil) + "%")
+        self.currentTimeLabel.setText(str(self.timeCount))
+
     def clickedBackFCFS(self):
         self._FCFSWin = FCFSWin()
         self._FCFSWin.show()
@@ -431,6 +516,20 @@ class FCFS_ResultWin(QMainWindow):
         self._processSchedWin = main.processSchedWin()
         self._processSchedWin.show()
         self.hide()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setPen(QPen(Qt.black, 10))
+        
+        painter.drawRect(80,60,1015,330) # Rec in top layer
+
+        painter.drawRect(80,60+330,1015,170) # Rec in second layer
+
+        painter.drawLine(80+300,60+330,80+300,550) # line between ready queue and cpu
+
+        painter.drawLine(80+300+385,60+330,80+300+385,550) # line between cpu and average
+
+        painter.drawRect(80,60+330 + 170,1015,275) # Bot in top layer
         
 if __name__ == "__main__":
     app = QApplication(sys.argv)
