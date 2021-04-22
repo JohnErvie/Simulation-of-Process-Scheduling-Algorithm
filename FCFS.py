@@ -268,6 +268,7 @@ class FCFS_ResultWin(QMainWindow):
         self.SimulationSpeed = 1
         self.totalEndTime = 0
         self.queue = []
+        self.readyQueue = []
 
         self.totalUsedTime = 0
         self.totalBurstTime = 0
@@ -368,6 +369,10 @@ class FCFS_ResultWin(QMainWindow):
         self.currentTimeLabel.setGeometry(QRect(100+300+105+38,225 + 175 + 40 + 50, 150, 50))
         self.currentTimeLabel.setFont(QtGui.QFont('Sanserif', 12, QtGui.QFont.Bold))
 
+        self.readyQueueLabel = QLabel(self)
+        self.readyQueueLabel.setGeometry(QRect(100,225 + 175 + 50, 500, 50))
+        self.readyQueueLabel.setFont(QtGui.QFont('Sanserif', 12, QtGui.QFont.Bold))
+
     def Design(self):
         self.queueLabel = QLabel("Ready Queue", self)
         self.queueLabel.setGeometry(QRect(100,225 + 175, 150, 50))
@@ -444,6 +449,10 @@ class FCFS_ResultWin(QMainWindow):
                         rowbt +=1
                     lowbt += 1
 
+                ## Getting the ready Queue
+                for i in range(int(len(self.queue))):
+                    self.readyQueue.append(self.queue[i][0])
+                    
             qRow = 0
             while qRow < int(len(self.queue)):
                 if int(self.queue[qRow][2]) <= 0: # if the process has 0 burst time, delete that process in queue
@@ -472,9 +481,6 @@ class FCFS_ResultWin(QMainWindow):
             # getting the highest end time
             self.totalEndTime = max(l[3] for l in self.listedVal)
 
-            print(self.totalUsedTime)
-            print(self.timeCount)
-
             if self.timeCount > 0:
                 self.cpuUtil = (self.totalUsedTime/(self.timeCount+1))*100 # formula for Cpu Utilization
 
@@ -482,15 +488,17 @@ class FCFS_ResultWin(QMainWindow):
             self.timeCount += 1
 
             self.updateResults()
+            self.readyQueue.clear()
 
             if self.numTerminate == self.allProcess:
-                #Donemsg = QMessageBox(self)
-                #Donemsg.setIcon(QMessageBox.Information)
-                #Donemsg.setInformativeText("The process are done!")
-                #Donemsg.setWindowTitle("Done")
-                #Donemsg.setStandardButtons(QMessageBox.Ok)
-                #Donemsg.show()
+                Donemsg = QMessageBox(self)
+                Donemsg.setIcon(QMessageBox.Information)
+                Donemsg.setInformativeText("The process are done!")
+                Donemsg.setWindowTitle("Done")
+                Donemsg.setStandardButtons(QMessageBox.Ok)
+                Donemsg.show()
                 self.start = False # pause the timer
+                self.updateResults()
             #loop = False
 
     # update the table
@@ -508,6 +516,7 @@ class FCFS_ResultWin(QMainWindow):
         self.aveTTLabel.setText("%.2f" %(self.aveTT))
         self.CPUUtilLabel.setText("%.2f" %(self.cpuUtil) + "%")
         self.currentTimeLabel.setText(str(self.timeCount))
+        self.readyQueueLabel.setText(", ".join(str(x) for x in self.readyQueue))
 
     def clickedBackFCFS(self):
         self._FCFSWin = FCFSWin()

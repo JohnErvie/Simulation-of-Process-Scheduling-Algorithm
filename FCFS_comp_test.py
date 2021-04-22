@@ -14,7 +14,6 @@ import time
 import main
 
 FCFS_values = ['p1', 10, 5, 0, 0, 0, 'p2', 8, 4, 0, 0, 0, 'p3', 12, 4, 0, 0, 0, 'p4', 3, 3, 0, 0, 0, 'p5', 15, 5, 0, 0, 0,]
-
 # FCFS Result Window
 class FCFS_ResultWin(QMainWindow):
     def __init__(self):
@@ -264,12 +263,12 @@ class FCFS_ResultWin(QMainWindow):
             self.updateResults()
 
             if self.numTerminate == self.allProcess:
-                #Donemsg = QMessageBox(self)
-                #Donemsg.setIcon(QMessageBox.Information)
-                #Donemsg.setInformativeText("The process are done!")
-                #Donemsg.setWindowTitle("Done")
-                #Donemsg.setStandardButtons(QMessageBox.Ok)
-                #Donemsg.show()
+                Donemsg = QMessageBox(self)
+                Donemsg.setIcon(QMessageBox.Information)
+                Donemsg.setInformativeText("The process are done!")
+                Donemsg.setWindowTitle("Done")
+                Donemsg.setStandardButtons(QMessageBox.Ok)
+                Donemsg.show()
                 self.start = False # pause the timer
             #loop = False
 
