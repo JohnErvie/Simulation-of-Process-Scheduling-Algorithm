@@ -270,6 +270,14 @@ class FCFS_ResultWin(QMainWindow):
         self.queue = []
         self.readyQueue = []
 
+        self.processID = []
+        i = 0 # PID starts with 0 index
+        while i < self.lengthFCFS_valTables:
+            self.processID.append(self.FCFS_valTables[i])
+            i += 6
+
+        self.savedTotalUsedTime = 0
+        self.ganttChartRow = 0
         self.totalUsedTime = 0
         self.totalBurstTime = 0
         for i in range(self.allProcess): #computing the Cpu Utilization
@@ -348,6 +356,18 @@ class FCFS_ResultWin(QMainWindow):
         self.FCFSResultTable.setColumnWidth(4,158)
         self.FCFSResultTable.setColumnWidth(5,158)
 
+        # Gantt Chart Table
+        self.rowGanttChartTable = self.allProcess
+        self.columnGanttChartTable = 0
+        self.ganttChartTable = QTableWidget(self.rowGanttChartTable,self.columnGanttChartTable,self)
+        self.ganttChartTable.setGeometry(QRect(100+50,50+100+460, 975-100, 217))
+        self.ganttChartTable.setFont(QtGui.QFont('Sanserif', 12))
+
+        self.ganttChartTable.setVerticalHeaderLabels(self.processID)
+
+        for i in range(self.allProcess):
+            self.ganttChartTable.setRowHeight(i,15)
+
         self.currentJobResLabel = QLabel(self)
         self.currentJobResLabel.setGeometry(QRect(100+300+20,225 + 175 + 40 + 50, 150, 50))
         self.currentJobResLabel.setFont(QtGui.QFont('Sanserif', 12, QtGui.QFont.Bold))
@@ -407,8 +427,12 @@ class FCFS_ResultWin(QMainWindow):
         self.aveTATimelbl.setFont(QtGui.QFont('Sanserif', 11))
 
         self.ganttChartLabel = QLabel("Gantt Chart", self)
-        self.ganttChartLabel.setGeometry(QRect(100,225 + 175 + 170, 150, 50))
+        self.ganttChartLabel.setGeometry(QRect(100,225 + 175 + 165, 150, 50))
         self.ganttChartLabel.setFont(QtGui.QFont('Sanserif', 15, QtGui.QFont.Bold))
+
+        self.gcTimesLabel = QLabel("Time(s)", self)
+        self.gcTimesLabel.setGeometry(QRect(100+500-15,225 + 175 + 165+10, 150, 50))
+        self.gcTimesLabel.setFont(QtGui.QFont('Sanserif', 9))
 
     def Timer(self):
         self.start = True
@@ -444,6 +468,12 @@ class FCFS_ResultWin(QMainWindow):
                             self.queue[rowbt][2] = int(self.queue[rowbt][2]) - 1 # subtract 1 burst time
                             self.currentJob = self.queue[rowbt][0]
                             self.totalUsedTime += 1
+
+                            # saving the row for gantt chart
+                            for i in range(self.allProcess):
+                                if self.queue[rowbt][0] == self.listedVal[i][0]:
+                                    self.ganttChartRow = i
+
                             rowbt = int(len(self.queue))
                             loopqueue = False
                         rowbt +=1
@@ -485,18 +515,17 @@ class FCFS_ResultWin(QMainWindow):
                 self.cpuUtil = (self.totalUsedTime/(self.timeCount+1))*100 # formula for Cpu Utilization
 
             #if self.numTerminate != self.allProcess:
-            self.timeCount += 1
-
             self.updateResults()
             self.readyQueue.clear()
-
+            self.timeCount += 1
+            
             if self.numTerminate == self.allProcess:
-                Donemsg = QMessageBox(self)
-                Donemsg.setIcon(QMessageBox.Information)
-                Donemsg.setInformativeText("The process are done!")
-                Donemsg.setWindowTitle("Done")
-                Donemsg.setStandardButtons(QMessageBox.Ok)
-                Donemsg.show()
+                self.Donemsg = QMessageBox(self)
+                self.Donemsg.setIcon(QMessageBox.Information)
+                self.Donemsg.setInformativeText("The process are done!")
+                self.Donemsg.setWindowTitle("Done")
+                self.Donemsg.setStandardButtons(QMessageBox.Ok)
+                self.Donemsg.show()
                 self.start = False # pause the timer
                 self.updateResults()
             #loop = False
@@ -518,7 +547,25 @@ class FCFS_ResultWin(QMainWindow):
         self.currentTimeLabel.setText(str(self.timeCount))
         self.readyQueueLabel.setText(", ".join(str(x) for x in self.readyQueue))
 
+        #update gantt chart
+        self.gcColumnHeader = QTableWidgetItem(str(self.timeCount))
+        self.ganttChartTable.setColumnCount(self.timeCount+1)
+        self.ganttChartTable.setHorizontalHeaderItem(self.timeCount,self.gcColumnHeader)
+
+        self.ganttChartTable.setColumnWidth(self.timeCount,10)
+
+        self.item = QTableWidgetItem(" ")
+        if self.totalUsedTime > self.savedTotalUsedTime:
+            self.item.setBackground(QtGui.QColor(0,0,0))
+            self.ganttChartTable.setItem(self.ganttChartRow, self.timeCount, QTableWidgetItem(self.item))
+        else:
+            self.item.setBackground(QtGui.QColor(255,255,255))
+            self.ganttChartTable.setItem(self.ganttChartRow, self.timeCount, QTableWidgetItem(self.item))
+
+        self.savedTotalUsedTime = self.totalUsedTime # saved the last totalUsedTime
+
     def clickedBackFCFS(self):
+        self.Donemsg.hide()
         self._FCFSWin = FCFSWin()
         self._FCFSWin.show()
         self.hide()
@@ -541,6 +588,13 @@ class FCFS_ResultWin(QMainWindow):
         painter.drawLine(80+300+385,60+330,80+300+385,550) # line between cpu and average
 
         painter.drawRect(80,60+330 + 170,1015,275) # Bot in top layer
+
+        painterTxt = QtGui.QPainter(self)
+        painterTxt.setPen(QPen(Qt.black))
+        painterTxt.translate(20, 800)
+        painterTxt.rotate(-90)
+        painterTxt.drawText(50, 125, "Process ID")
+        painterTxt.end()
         
 if __name__ == "__main__":
     app = QApplication(sys.argv)
