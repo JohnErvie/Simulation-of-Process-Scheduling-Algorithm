@@ -190,7 +190,7 @@ class FCFSWin(QMainWindow):
                 col_index += 1
 
             for i in range(3):
-                    self.valTables.append(0)
+                self.valTables.append(0)
 
         self.lengthVal = len(self.valTables)
 
@@ -228,6 +228,7 @@ class FCFSWin(QMainWindow):
         else:
             global FCFS_values
             FCFS_values = self.valTables
+            print(FCFS_values)
             self._FCFS_ResultWin = FCFS_ResultWin()
             self._FCFS_ResultWin.show()
             self.hide()
@@ -290,6 +291,13 @@ class FCFS_ResultWin(QMainWindow):
         self.numTerminate = 0
 
         self.timeCount = 0
+
+        self.Donemsg = QMessageBox(self)
+        self.Donemsg.setIcon(QMessageBox.Information)
+        self.Donemsg.setText("The process are done!")
+        #self.Donemsg.setInformativeText("The process are done!")
+        self.Donemsg.setWindowTitle("Done")
+        self.Donemsg.setStandardButtons(QMessageBox.Ok)
 
         self.initWindow()
 
@@ -394,9 +402,19 @@ class FCFS_ResultWin(QMainWindow):
         self.currentTimeLabel.setGeometry(QRect(100+300+105+38,225 + 175 + 40 + 50, 150, 50))
         self.currentTimeLabel.setFont(QtGui.QFont('Sanserif', 12, QtGui.QFont.Bold))
 
-        self.readyQueueLabel = QLabel(self)
-        self.readyQueueLabel.setGeometry(QRect(100,225 + 175 + 50, 500, 50))
-        self.readyQueueLabel.setFont(QtGui.QFont('Sanserif', 12, QtGui.QFont.Bold))
+        self.rowReadyQueueTable = 1
+        self.columnGanttChartTable = 0
+        self.readyQueueTable = QTableWidget(self.rowReadyQueueTable,self.columnGanttChartTable,self)
+        self.readyQueueTable.setGeometry(QRect(100,225 + 175 + 50, 255, 80))
+        self.readyQueueTable.setFont(QtGui.QFont('Sanserif', 12))
+
+        self.readyQueueTable.setRowHeight(0,75)
+
+        fnt = self.readyQueueTable.font()
+        fnt.setPointSize(11)
+        self.readyQueueTable.setFont(fnt)
+        self.readyQueueTable.horizontalHeader().hide()
+        self.readyQueueTable.verticalHeader().hide()
 
     def Design(self):
         self.queueLabel = QLabel("Ready Queue", self)
@@ -448,7 +466,6 @@ class FCFS_ResultWin(QMainWindow):
         timer.start(1000)
         
     def variables(self):
-        
         if self.start:
             # if is there process arrive in current time then add it into queue
             for row in range(self.allProcess):
@@ -483,6 +500,9 @@ class FCFS_ResultWin(QMainWindow):
                 ## Getting the ready Queue
                 for i in range(int(len(self.queue))):
                     self.readyQueue.append(self.queue[i][0])
+
+            else:
+                self.currentJob = ""
                     
             qRow = 0
             while qRow < int(len(self.queue)):
@@ -506,9 +526,6 @@ class FCFS_ResultWin(QMainWindow):
             self.aveWT = totalWaitingTime/self.allProcess
             self.aveTT = totalTurnAroundTime/self.allProcess
 
-            self.allProcessNew = self.allProcess
-            self.listedValNew = self.listedVal
-
             # getting the highest end time
             self.totalEndTime = max(l[3] for l in self.listedVal)
 
@@ -521,12 +538,7 @@ class FCFS_ResultWin(QMainWindow):
             self.timeCount += 1
             
             if self.numTerminate == self.allProcess:
-                self.Donemsg = QMessageBox(self)
-                self.Donemsg.setIcon(QMessageBox.Information)
-                self.Donemsg.setInformativeText("The process are done!")
-                self.Donemsg.setWindowTitle("Done")
-                self.Donemsg.setStandardButtons(QMessageBox.Ok)
-                self.Donemsg.show()
+                #self.Donemsg.show()
                 self.start = False # pause the timer
                 self.updateResults()
             #loop = False
@@ -534,19 +546,29 @@ class FCFS_ResultWin(QMainWindow):
     # update the table
     def updateResults(self):
         for i in range(self.rowResultTable): # inputting the End time into table
-            self.FCFSResultTable.setItem(i,0,QTableWidgetItem(str(self.listedValNew[i][0])))
-            self.FCFSResultTable.setItem(i,1,QTableWidgetItem(str(self.listedValNew[i][1])))
-            self.FCFSResultTable.setItem(i,2,QTableWidgetItem(str(self.listedValNew[i][2])))
-            self.FCFSResultTable.setItem(i,3,QTableWidgetItem(str(self.listedValNew[i][3])))
-            self.FCFSResultTable.setItem(i,4,QTableWidgetItem(str(self.listedValNew[i][4])))
-            self.FCFSResultTable.setItem(i,5,QTableWidgetItem(str(self.listedValNew[i][5])))
+            self.FCFSResultTable.setItem(i,0,QTableWidgetItem(str(self.listedVal[i][0])))
+            self.FCFSResultTable.setItem(i,1,QTableWidgetItem(str(self.listedVal[i][1])))
+            self.FCFSResultTable.setItem(i,2,QTableWidgetItem(str(self.listedVal[i][2])))
+            self.FCFSResultTable.setItem(i,3,QTableWidgetItem(str(self.listedVal[i][3])))
+            self.FCFSResultTable.setItem(i,4,QTableWidgetItem(str(self.listedVal[i][4])))
+            self.FCFSResultTable.setItem(i,5,QTableWidgetItem(str(self.listedVal[i][5])))
 
-        self.currentJobResLabel.setText(str(self.currentJob))
+        if self.start:
+            self.currentJobResLabel.setText(str(self.currentJob))
+        else:
+            self.currentJobResLabel.setText("")
+
         self.aveWTLabel.setText("%.2f" %(self.aveWT))
         self.aveTTLabel.setText("%.2f" %(self.aveTT))
         self.CPUUtilLabel.setText("%.2f" %(self.cpuUtil) + "%")
         self.currentTimeLabel.setText(str(self.timeCount))
-        self.readyQueueLabel.setText(", ".join(str(x) for x in self.readyQueue))
+
+        self.readyQueueTable.setColumnCount(int(len(self.readyQueue)))
+
+        for i in range(int(len(self.readyQueue))):
+            self.readyQueueItem = QTableWidgetItem(str(self.readyQueue[i]))
+            self.readyQueueTable.setItem(0, i, QTableWidgetItem(self.readyQueueItem))
+            self.readyQueueTable.setColumnWidth(i,10)
 
         #update gantt chart
         self.gcColumnHeader = QTableWidgetItem(str(self.timeCount))
@@ -566,7 +588,7 @@ class FCFS_ResultWin(QMainWindow):
         self.savedTotalUsedTime = self.totalUsedTime # saved the last totalUsedTime
 
     def clickedBackFCFS(self):
-        self.Donemsg.hide()
+        #self.Donemsg.hide()
         self._FCFSWin = FCFSWin()
         self._FCFSWin.show()
         self.hide()

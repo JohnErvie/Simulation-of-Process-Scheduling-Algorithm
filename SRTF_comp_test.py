@@ -64,6 +64,7 @@ class SRTF_ResultWin(QMainWindow):
         self.cpuUtil = 0
         self.aveTT = 0
         self.aveWT = 0
+        self.currentJob = ""
 
         # For Gantt Chart
         self.savedTotalUsedTime = 0
@@ -178,9 +179,19 @@ class SRTF_ResultWin(QMainWindow):
         self.currentTimeLabel.setGeometry(QRect(100+300+105+38,225 + 175 + 40 + 50, 150, 50))
         self.currentTimeLabel.setFont(QtGui.QFont('Sanserif', 12, QtGui.QFont.Bold))
 
-        self.readyQueueLabel = QLabel(self)
-        self.readyQueueLabel.setGeometry(QRect(100,225 + 175 + 50, 500, 50))
-        self.readyQueueLabel.setFont(QtGui.QFont('Sanserif', 12, QtGui.QFont.Bold))
+        self.rowReadyQueueTable = 1
+        self.columnGanttChartTable = 0
+        self.readyQueueTable = QTableWidget(self.rowReadyQueueTable,self.columnGanttChartTable,self)
+        self.readyQueueTable.setGeometry(QRect(100,225 + 175 + 50, 255, 80))
+        self.readyQueueTable.setFont(QtGui.QFont('Sanserif', 12))
+
+        self.readyQueueTable.setRowHeight(0,75)
+
+        fnt = self.readyQueueTable.font()
+        fnt.setPointSize(11)
+        self.readyQueueTable.setFont(fnt)
+        self.readyQueueTable.horizontalHeader().hide()
+        self.readyQueueTable.verticalHeader().hide()
 
     def Design(self):
         self.queueLabel = QLabel("Ready Queue", self)
@@ -250,11 +261,25 @@ class SRTF_ResultWin(QMainWindow):
                     while rowbt < int(len(self.queue)):
                         if int(self.queue[rowbt][2]) == lowbt:
                             self.queue[rowbt][2] = int(self.queue[rowbt][2]) - 1 # subtract 1 burst time
+                            self.currentJob = self.queue[rowbt][0]
                             self.totalUsedTime += 1
+
+                            # saving the row for gantt chart
+                            for i in range(self.allProcess):
+                                if self.queue[rowbt][0] == self.listedVal[i][0]:
+                                    self.ganttChartRow = i
+
                             rowbt = int(len(self.queue))
                             loopqueue = False
                         rowbt +=1
                     lowbt += 1
+
+                ## Getting the ready Queue
+                for i in range(int(len(self.queue))):
+                    self.readyQueue.append(self.queue[i][0])
+
+            else:
+                self.currentJob = ""
 
                 # deleting the process in queue if 0 burst time
             qRow = 0
@@ -287,16 +312,17 @@ class SRTF_ResultWin(QMainWindow):
 
 
             self.updateResults()
-            #self.readyQueue.clear()
+            self.readyQueue.clear()
             self.timeCount += 1
 
             if self.numTerminate == self.allProcess:
-                #self.Donemsg = QMessageBox(self)
-                #self.Donemsg.setIcon(QMessageBox.Information)
+                self.Donemsg = QMessageBox(self)
+                self.Donemsg.setIcon(QMessageBox.Information)
+                self.Donemsg.setText("The process are done!")
                 #self.Donemsg.setInformativeText("The process are done!")
-                #self.Donemsg.setWindowTitle("Done")
-                #self.Donemsg.setStandardButtons(QMessageBox.Ok)
-                #self.Donemsg.show()
+                self.Donemsg.setWindowTitle("Done")
+                self.Donemsg.setStandardButtons(QMessageBox.Ok)
+                self.Donemsg.show()
                 self.start = False # pause the timer
                 self.updateResults()
 
@@ -309,14 +335,23 @@ class SRTF_ResultWin(QMainWindow):
             self.ResultTable.setItem(i,4,QTableWidgetItem(str(self.listedVal[i][4])))
             self.ResultTable.setItem(i,5,QTableWidgetItem(str(self.listedVal[i][5])))
 
-        #self.currentJobResLabel.setText(str(self.currentJob))
+        if self.start:
+            self.currentJobResLabel.setText(str(self.currentJob))
+        else:
+            self.currentJobResLabel.setText("")
+
         self.aveWTLabel.setText("%.2f" %(self.aveWT))
         self.aveTTLabel.setText("%.2f" %(self.aveTT))
         self.CPUUtilLabel.setText("%.2f" %(self.cpuUtil) + "%")
         self.currentTimeLabel.setText(str(self.timeCount))
-        #self.readyQueueLabel.setText(", ".join(str(x) for x in self.readyQueue))
 
-        '''
+        self.readyQueueTable.setColumnCount(int(len(self.readyQueue)))
+
+        for i in range(int(len(self.readyQueue))):
+            self.readyQueueItem = QTableWidgetItem(str(self.readyQueue[i]))
+            self.readyQueueTable.setItem(0, i, QTableWidgetItem(self.readyQueueItem))
+            self.readyQueueTable.setColumnWidth(i,10)
+        
         #update gantt chart
         self.gcColumnHeader = QTableWidgetItem(str(self.timeCount))
         self.ganttChartTable.setColumnCount(self.timeCount+1)
@@ -333,7 +368,8 @@ class SRTF_ResultWin(QMainWindow):
             self.ganttChartTable.setItem(self.ganttChartRow, self.timeCount, QTableWidgetItem(self.item))
 
         self.savedTotalUsedTime = self.totalUsedTime # saved the last totalUsedTime
-        '''
+
+
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -358,6 +394,7 @@ class SRTF_ResultWin(QMainWindow):
     
 
     def clickedBack(self):
+        self.Donemsg.hide()
         self._SRTFWin = SRTFWin()
         self._SRTFWin.show()
         self.hide()
