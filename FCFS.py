@@ -323,10 +323,10 @@ class FCFS_ResultWin(QMainWindow):
         #print(self.FCFS_valTables)
 
     def resultLabels(self):
-        titleResultLabel = QLabel("Job Pool", self)
-        titleResultLabel.setGeometry(QRect(30+130+350,50, 900, 100))
+        titleResultLabel = QLabel("First Come First Serve", self)
+        titleResultLabel.setGeometry(QRect(30+150+125,10, 900, 100))
         titleResultLabel.setStyleSheet("QWidget { color: Black}")
-        titleResultLabel.setFont(QtGui.QFont('Sanserif', 20, QtGui.QFont.Bold))
+        titleResultLabel.setFont(QtGui.QFont('Sanserif', 30, QtGui.QFont.Bold))
 
     def resultButtons(self):
         backButton = QPushButton('Back to FCFS', self)
@@ -341,6 +341,11 @@ class FCFS_ResultWin(QMainWindow):
         calButton.clicked.connect(self.clickedMainMenu)
 
     def resultWidgetInit(self):
+        self.jobPoolLabel = QLabel("Job Pool", self)
+        self.jobPoolLabel.setGeometry(QRect(30+130+350,80, 900, 100))
+        self.jobPoolLabel.setStyleSheet("QWidget { color: Black}")
+        self.jobPoolLabel.setFont(QtGui.QFont('Sanserif', 20, QtGui.QFont.Bold))
+
         self.rowResultTable = self.allProcess
         self.columnResultTable = 6
         self.FCFSResultTable = QTableWidget(self.rowResultTable,self.columnResultTable,self)
@@ -429,10 +434,6 @@ class FCFS_ResultWin(QMainWindow):
         self.ganttChartLabel = QLabel("Gantt Chart", self)
         self.ganttChartLabel.setGeometry(QRect(100,225 + 175 + 165, 150, 50))
         self.ganttChartLabel.setFont(QtGui.QFont('Sanserif', 15, QtGui.QFont.Bold))
-
-        self.gcTimesLabel = QLabel("Time(s)", self)
-        self.gcTimesLabel.setGeometry(QRect(100+500-15,225 + 175 + 165+10, 150, 50))
-        self.gcTimesLabel.setFont(QtGui.QFont('Sanserif', 9))
 
     def Timer(self):
         self.start = True
@@ -579,7 +580,7 @@ class FCFS_ResultWin(QMainWindow):
         painter = QPainter(self)
         painter.setPen(QPen(Qt.black, 10))
         
-        painter.drawRect(80,60,1015,330) # Rec in top layer
+        painter.drawRect(80,100,1015,300-10) # Rec in top layer
 
         painter.drawRect(80,60+330,1015,170) # Rec in second layer
 

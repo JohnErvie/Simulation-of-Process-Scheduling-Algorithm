@@ -105,10 +105,10 @@ class FCFS_ResultWin(QMainWindow):
         #print(self.FCFS_valTables)
 
     def resultLabels(self):
-        titleResultLabel = QLabel("Job Pool", self)
-        titleResultLabel.setGeometry(QRect(30+130+350,50, 900, 100))
+        titleResultLabel = QLabel("First Come First Serve", self)
+        titleResultLabel.setGeometry(QRect(30+150+125,10, 900, 100))
         titleResultLabel.setStyleSheet("QWidget { color: Black}")
-        titleResultLabel.setFont(QtGui.QFont('Sanserif', 20, QtGui.QFont.Bold))
+        titleResultLabel.setFont(QtGui.QFont('Sanserif', 30, QtGui.QFont.Bold))
 
     def resultButtons(self):
         backButton = QPushButton('Back to FCFS', self)
@@ -123,6 +123,11 @@ class FCFS_ResultWin(QMainWindow):
         calButton.clicked.connect(self.clickedMainMenu)
 
     def resultWidgetInit(self):
+        self.jobPoolLabel = QLabel("Job Pool", self)
+        self.jobPoolLabel.setGeometry(QRect(30+130+350,80, 900, 100))
+        self.jobPoolLabel.setStyleSheet("QWidget { color: Black}")
+        self.jobPoolLabel.setFont(QtGui.QFont('Sanserif', 20, QtGui.QFont.Bold))
+
         self.rowResultTable = self.allProcess
         self.columnResultTable = 6
         self.FCFSResultTable = QTableWidget(self.rowResultTable,self.columnResultTable,self)
@@ -225,7 +230,6 @@ class FCFS_ResultWin(QMainWindow):
         timer.start(1000)
         
     def variables(self):
-        
         if self.start:
             # if is there process arrive in current time then add it into queue
             for row in range(self.allProcess):
@@ -283,9 +287,6 @@ class FCFS_ResultWin(QMainWindow):
             self.aveWT = totalWaitingTime/self.allProcess
             self.aveTT = totalTurnAroundTime/self.allProcess
 
-            self.allProcessNew = self.allProcess
-            self.listedValNew = self.listedVal
-
             # getting the highest end time
             self.totalEndTime = max(l[3] for l in self.listedVal)
 
@@ -311,12 +312,12 @@ class FCFS_ResultWin(QMainWindow):
     # update the table
     def updateResults(self):
         for i in range(self.rowResultTable): # inputting the End time into table
-            self.FCFSResultTable.setItem(i,0,QTableWidgetItem(str(self.listedValNew[i][0])))
-            self.FCFSResultTable.setItem(i,1,QTableWidgetItem(str(self.listedValNew[i][1])))
-            self.FCFSResultTable.setItem(i,2,QTableWidgetItem(str(self.listedValNew[i][2])))
-            self.FCFSResultTable.setItem(i,3,QTableWidgetItem(str(self.listedValNew[i][3])))
-            self.FCFSResultTable.setItem(i,4,QTableWidgetItem(str(self.listedValNew[i][4])))
-            self.FCFSResultTable.setItem(i,5,QTableWidgetItem(str(self.listedValNew[i][5])))
+            self.FCFSResultTable.setItem(i,0,QTableWidgetItem(str(self.listedVal[i][0])))
+            self.FCFSResultTable.setItem(i,1,QTableWidgetItem(str(self.listedVal[i][1])))
+            self.FCFSResultTable.setItem(i,2,QTableWidgetItem(str(self.listedVal[i][2])))
+            self.FCFSResultTable.setItem(i,3,QTableWidgetItem(str(self.listedVal[i][3])))
+            self.FCFSResultTable.setItem(i,4,QTableWidgetItem(str(self.listedVal[i][4])))
+            self.FCFSResultTable.setItem(i,5,QTableWidgetItem(str(self.listedVal[i][5])))
 
         self.currentJobResLabel.setText(str(self.currentJob))
         self.aveWTLabel.setText("%.2f" %(self.aveWT))
@@ -357,7 +358,7 @@ class FCFS_ResultWin(QMainWindow):
         painter = QPainter(self)
         painter.setPen(QPen(Qt.black, 10))
         
-        painter.drawRect(80,60,1015,330) # Rec in top layer
+        painter.drawRect(80,100,1015,300-10) # Rec in top layer
 
         painter.drawRect(80,60+330,1015,170) # Rec in second layer
 
