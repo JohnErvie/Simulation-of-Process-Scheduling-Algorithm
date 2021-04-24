@@ -242,8 +242,6 @@ class SRTF_ResultWin(QMainWindow):
         self.SRTF_valTables = SRTF_values
         self.lengthSRTF_valTables = len(self.SRTF_valTables)
 
-        self.lengthSRTF_valTables = len(self.SRTF_valTables)
-
         self.allProcess = int(self.lengthSRTF_valTables/6)
 
         self.listedVal = []
@@ -257,11 +255,7 @@ class SRTF_ResultWin(QMainWindow):
                 self.listedVal[row].append(self.SRTF_valTables[self.indexVal])
                 self.indexVal += 1
 
-        print(self.listedVal)
-
-        self.endAllProcess = 0
-        for i in range(self.allProcess):
-            self.endAllProcess += int(self.listedVal[i][1]) + int(self.listedVal[i][2])
+        #print(self.listedVal)
 
         self.timeCount = 0
         self.queue = []
@@ -572,7 +566,10 @@ class SRTF_ResultWin(QMainWindow):
         self.readyQueueTable.setColumnCount(int(len(self.readyQueue)))
 
         for i in range(int(len(self.readyQueue))):
-            self.readyQueueItem = QTableWidgetItem(str(self.readyQueue[i]))
+            if i != int(len(self.readyQueue)) - 1:
+                self.readyQueueItem = QTableWidgetItem(str(self.readyQueue[i]) + "-->")
+            else:
+                self.readyQueueItem = QTableWidgetItem(str(self.readyQueue[i]))
             self.readyQueueTable.setItem(0, i, QTableWidgetItem(self.readyQueueItem))
             self.readyQueueTable.setColumnWidth(i,10)
         

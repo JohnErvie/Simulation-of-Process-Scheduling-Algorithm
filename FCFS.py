@@ -574,7 +574,10 @@ class FCFS_ResultWin(QMainWindow):
         self.readyQueueTable.setColumnCount(int(len(self.readyQueue)))
 
         for i in range(int(len(self.readyQueue))):
-            self.readyQueueItem = QTableWidgetItem(str(self.readyQueue[i]))
+            if i != int(len(self.readyQueue)) - 1:
+                self.readyQueueItem = QTableWidgetItem(str(self.readyQueue[i]) + "-->")
+            else:
+                self.readyQueueItem = QTableWidgetItem(str(self.readyQueue[i]))
             self.readyQueueTable.setItem(0, i, QTableWidgetItem(self.readyQueueItem))
             self.readyQueueTable.setColumnWidth(i,10)
 
