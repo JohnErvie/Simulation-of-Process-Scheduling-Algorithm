@@ -452,6 +452,10 @@ class SRTF_ResultWin(QMainWindow):
         self.ganttChartLabel.setGeometry(QRect(100,225 + 175 + 165, 150, 50))
         self.ganttChartLabel.setFont(QtGui.QFont('Sanserif', 15, QtGui.QFont.Bold))
 
+        self.ganttChartTimeLbl = QLabel("Time(s)", self)
+        self.ganttChartTimeLbl.setGeometry(QRect(100+460,225 + 175 + 165+10, 150, 50))
+        self.ganttChartTimeLbl.setFont(QtGui.QFont('Sanserif'))
+
     def Timer(self):
         self.start = True
 
@@ -521,6 +525,10 @@ class SRTF_ResultWin(QMainWindow):
 
             if self.timeCount > 0:
                     self.cpuUtil = (self.totalUsedTime/(self.timeCount+1))*100 # formula for Cpu Utilization
+
+            if self.timeCount == 0:
+                if self.totalUsedTime > 0:
+                    self.cpuUtil = 100
 
             #computing the average turn around time and waiting time
             totalWaitingTime = 0
