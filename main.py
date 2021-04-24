@@ -9,11 +9,18 @@ from PyQt5.QtCore import QRect, Qt, QTimer
 from PyQt5.QtGui import QPixmap
 
 #Other Win
+sys.path.insert(1,'Process-Algorithms/First-Come-First-Serve')
 import FCFS
+sys.path.insert(1,'Process-Algorithms/Shortest-Remaining-Time-First')
 import SRTF
+sys.path.insert(1,'Process-Algorithms/Round-Robin')
 import RR
+sys.path.insert(1,'Process-Algorithms/Non-Preemtive-Priority')
 import NPP
+sys.path.insert(1,'Process-Algorithms/Preemtive-Priority')
 import PP
+sys.path.insert(1,'Process-Algorithms/Shortest-Job-First')
+import SJF
 
 class processSchedWin(QMainWindow):
     def __init__(self):
@@ -85,6 +92,11 @@ class processSchedWin(QMainWindow):
         PPButton.setFont(QtGui.QFont('Times New Roman',14))
         PPButton.clicked.connect(self.clickedPP)
 
+        SJFButton = QPushButton('Shortest Job First', self)
+        SJFButton.setGeometry(QRect(180+500,250 + 100+ 25 + 125, 270, 100))
+        SJFButton.setFont(QtGui.QFont('Times New Roman',14))
+        #SJFButton.clicked.connect(self.clickedSJF)
+
     def clickedFCFS(self):
         self._FCFSWin = FCFS.FCFSWin()
         self._FCFSWin.show()
@@ -108,6 +120,11 @@ class processSchedWin(QMainWindow):
     def clickedPP(self):
         self._PPWin = PP.PPWin()
         self._PPWin.show()
+        self.hide()
+
+    def clickedSJF(self):
+        self._SJFWin = SJF.SJFWin()
+        self._SJFWin.show()
         self.hide()
 
 if __name__ == "__main__":

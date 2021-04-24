@@ -228,7 +228,6 @@ class FCFSWin(QMainWindow):
         else:
             global FCFS_values
             FCFS_values = self.valTables
-            print(FCFS_values)
             self._FCFS_ResultWin = FCFS_ResultWin()
             self._FCFS_ResultWin.show()
             self.hide()
@@ -280,9 +279,6 @@ class FCFS_ResultWin(QMainWindow):
         self.savedTotalUsedTime = 0
         self.ganttChartRow = 0
         self.totalUsedTime = 0
-        self.totalBurstTime = 0
-        for i in range(self.allProcess): #computing the Cpu Utilization
-            self.totalBurstTime += int(self.listedVal[i][2])
 
         self.cpuUtil = 0
         self.aveTT = 0
