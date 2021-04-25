@@ -10,7 +10,7 @@ from PyQt5.QtCore import *
 import numpy as np
 
 #Other Win
-import main
+#import main
 
 NPP_values = ['p1', 3, 4, 2, 0, 0, 0, 'p2', 5, 9, 1, 0, 0, 0, 'p3', 8, 4, 2, 0, 0, 0, 'p4', 0, 7, 1, 0, 0, 0, 'p5', 12, 6, 1, 0, 0, 0]
 # NPP Result Window
