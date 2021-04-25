@@ -309,6 +309,12 @@ class NPP_ResultWin(QMainWindow):
                                                 if self.queue[int(self.sameBurstTime[rowat])][0] == self.listedVal[i][0]:
                                                     self.ganttChartRow = i
 
+                                            ## Getting the ready Queue
+                                            for i in range(int(len(self.queue))):
+                                                self.readyQueue.append(self.queue[i][0])
+                                            self.readyQueue.pop(int(self.sameBurstTime[rowat]))
+                                            self.readyQueue.insert(0,self.currentJob)
+
                                             rowat = int(len(self.queue))
                                             loopqueue = False
                                         rowat +=1
@@ -327,6 +333,12 @@ class NPP_ResultWin(QMainWindow):
                                     if self.queue[int(self.sameBurstTime[0])][0] == self.listedVal[i][0]:
                                         self.ganttChartRow = i
 
+                                ## Getting the ready Queue
+                                for i in range(int(len(self.queue))):
+                                    self.readyQueue.append(self.queue[i][0])
+                                self.readyQueue.pop(int(self.sameBurstTime[0]))
+                                self.readyQueue.insert(0,self.currentJob)
+
                         else:
                             self.queue[int(self.samePriority[0])][2] = int(self.queue[int(self.samePriority[0])][2]) - 1
                             self.savedBurstTime = int(self.queue[int(self.samePriority[0])][2])
@@ -339,6 +351,12 @@ class NPP_ResultWin(QMainWindow):
                             for i in range(self.allProcess):
                                 if self.queue[int(self.samePriority[0])][0] == self.listedVal[i][0]:
                                     self.ganttChartRow = i
+
+                            ## Getting the ready Queue
+                            for i in range(int(len(self.queue))):
+                                self.readyQueue.append(self.queue[i][0])
+                            self.readyQueue.pop(int(self.samePriority[0]))
+                            self.readyQueue.insert(0,self.currentJob)
                         
                     else: # if only 1 process in queue then execute it
                         self.queue[0][2] = int(self.queue[0][2]) - 1 # subtract 1 burst time
@@ -352,13 +370,15 @@ class NPP_ResultWin(QMainWindow):
                             if self.queue[0][0] == self.listedVal[i][0]:
                                 self.ganttChartRow = i
 
+                        ## Getting the ready Queue
+                        for i in range(int(len(self.queue))):
+                            self.readyQueue.append(self.queue[i][0])
+                        self.readyQueue.pop(0)
+                        self.readyQueue.insert(0,self.currentJob)
+
                     #print(self.sameBurstTime)
                     self.samePriority.clear()
                     self.sameBurstTime.clear()
-
-                    ## Getting the ready Queue
-                    for i in range(int(len(self.queue))):
-                        self.readyQueue.append(self.queue[i][0])
 
                 if int(len(self.queue)) == 0:
                     self.currentJob = ""
@@ -377,6 +397,8 @@ class NPP_ResultWin(QMainWindow):
                 ## Getting the ready Queue
                 for i in range(int(len(self.queue))):
                     self.readyQueue.append(self.queue[i][0])
+                self.readyQueue.pop(self.savedRow)
+                self.readyQueue.insert(0,self.currentJob)
 
             # deleting the 0 burst time in queue
             qRow = 0
