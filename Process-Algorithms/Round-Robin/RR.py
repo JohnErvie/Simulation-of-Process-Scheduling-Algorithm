@@ -318,6 +318,13 @@ class RR_ResultWin(QMainWindow):
 
         self.totalUsedTime = 0
 
+        self.Donemsg = QMessageBox(self)
+        self.Donemsg.setIcon(QMessageBox.Information)
+        self.Donemsg.setText("The process are done!")
+        #self.Donemsg.setInformativeText("The process are done!")
+        self.Donemsg.setWindowTitle("Done")
+        self.Donemsg.setStandardButtons(QMessageBox.Ok)
+
         self.initWindow()
 
     def initWindow(self):
@@ -479,13 +486,13 @@ class RR_ResultWin(QMainWindow):
         self.start = True
 
         # creating a timer object
-        timer = QTimer(self)
+        self.timer = QTimer(self)
 
         # adding action to timer
-        timer.timeout.connect(self.variables)
+        self.timer.timeout.connect(self.variables)
 
         # update the timer every second
-        timer.start(1000)
+        self.timer.start(1000)
 
     def variables(self):
         if self.start:
@@ -576,13 +583,7 @@ class RR_ResultWin(QMainWindow):
             self.timeCount += 1
 
             if self.numTerminate == self.allProcess:
-                self.Donemsg = QMessageBox(self)
-                self.Donemsg.setIcon(QMessageBox.Information)
-                self.Donemsg.setText("The process are done!")
-                #self.Donemsg.setInformativeText("The process are done!")
-                self.Donemsg.setWindowTitle("Done")
-                self.Donemsg.setStandardButtons(QMessageBox.Ok)
-                #self.Donemsg.show()
+                self.Donemsg.show()
                 self.start = False # pause the timer
                 self.updateResults()
 
@@ -655,7 +656,7 @@ class RR_ResultWin(QMainWindow):
     
 
     def clickedBack(self):
-        self.Donemsg.hide()
+        self.timer.stop()
         self._RRWin = RRWin()
         self._RRWin.show()
         self.hide()

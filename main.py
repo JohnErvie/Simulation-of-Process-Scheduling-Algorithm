@@ -95,7 +95,7 @@ class processSchedWin(QMainWindow):
         SJFButton = QPushButton('Shortest Job First', self)
         SJFButton.setGeometry(QRect(180+500,250 + 100+ 25 + 125, 270, 100))
         SJFButton.setFont(QtGui.QFont('Times New Roman',14))
-        #SJFButton.clicked.connect(self.clickedSJF)
+        SJFButton.clicked.connect(self.clickedSJF)
 
     def clickedFCFS(self):
         self._FCFSWin = FCFS.FCFSWin()

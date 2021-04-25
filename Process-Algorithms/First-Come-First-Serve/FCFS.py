@@ -457,13 +457,13 @@ class FCFS_ResultWin(QMainWindow):
         self.start = True
 
         # creating a timer object
-        timer = QTimer(self)
+        self.timer = QTimer(self)
 
         # adding action to timer
-        timer.timeout.connect(self.variables)
+        self.timer.timeout.connect(self.variables)
 
         # update the timer every second
-        timer.start(1000)
+        self.timer.start(1000)
         
     def variables(self):
         if self.start:
@@ -542,7 +542,7 @@ class FCFS_ResultWin(QMainWindow):
             self.timeCount += 1
             
             if self.numTerminate == self.allProcess:
-                #self.Donemsg.show()
+                self.Donemsg.show()
                 self.start = False # pause the timer
                 self.updateResults()
             #loop = False
@@ -595,7 +595,7 @@ class FCFS_ResultWin(QMainWindow):
         self.savedTotalUsedTime = self.totalUsedTime # saved the last totalUsedTime
 
     def clickedBackFCFS(self):
-        #self.Donemsg.hide()
+        self.timer.stop()
         self._FCFSWin = FCFSWin()
         self._FCFSWin.show()
         self.hide()

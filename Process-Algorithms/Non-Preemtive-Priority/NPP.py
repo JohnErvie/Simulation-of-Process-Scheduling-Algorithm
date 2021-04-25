@@ -458,13 +458,13 @@ class NPP_ResultWin(QMainWindow):
         self.start = True
 
         # creating a timer object
-        timer = QTimer(self)
+        self.timer = QTimer(self)
 
         # adding action to timer
-        timer.timeout.connect(self.variables)
+        self.timer.timeout.connect(self.variables)
 
         # update the timer every second
-        timer.start(1000)
+        self.timer.start(1000)
 
     def variables(self):
         if self.start:
@@ -655,7 +655,7 @@ class NPP_ResultWin(QMainWindow):
             self.timeCount += 1
 
             if self.numTerminate == self.allProcess:
-                #self.Donemsg.show()
+                self.Donemsg.show()
                 self.start = False # pause the timer
                 self.updateResults()
 
@@ -725,7 +725,7 @@ class NPP_ResultWin(QMainWindow):
         painterTxt.end()
     
     def clickedBack(self):
-        #self.Donemsg.hide()
+        self.timer.stop()
         self._PPWin = PPWin()
         self._PPWin.show()
         self.hide()

@@ -458,13 +458,13 @@ class SJF_ResultWin(QMainWindow):
         self.start = True
 
         # creating a timer object
-        timer = QTimer(self)
+        self.timer = QTimer(self)
 
         # adding action to timer
-        timer.timeout.connect(self.variables)
+        self.timer.timeout.connect(self.variables)
 
         # update the timer every second
-        timer.start(1000)
+        self.timer.start(1000)
         
     def variables(self):
         if self.start:
@@ -586,7 +586,7 @@ class SJF_ResultWin(QMainWindow):
             self.timeCount += 1
             
             if self.numTerminate == self.allProcess:
-                #self.Donemsg.show()
+                self.Donemsg.show()
                 self.start = False # pause the timer
                 self.updateResults()
             #loop = False
@@ -635,7 +635,7 @@ class SJF_ResultWin(QMainWindow):
         self.savedTotalUsedTime = self.totalUsedTime # saved the last totalUsedTime
 
     def clickedBackSJF(self):
-        #self.Donemsg.hide()
+        self.timer.stop()
         self._SJFWin = SJFWin()
         self._SJFWin.show()
         self.hide()
