@@ -23,6 +23,8 @@ class RR_Win(QMainWindow):
         self.width = 1200
         self.height = 950
 
+        self.setStyleSheet("RR_Win{background-image: url(Icons/rrbg.jpg);background-repeat: no-repeat;background-position: center;}")
+
         self.initWindow()
 
     def initWindow(self):
@@ -668,5 +670,6 @@ class RR_ResultWin(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    
     ex = RR_Win()
     sys.exit(app.exec_())

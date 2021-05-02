@@ -22,6 +22,8 @@ class PPWin(QMainWindow):
         self.width = 1200
         self.height = 950
 
+        self.setStyleSheet("PPWin{background-image: url(Icons/ppbg.jpg);background-repeat: no-repeat;background-position: center;}")
+
         self.initWindow()
 
     def initWindow(self):
@@ -682,6 +684,14 @@ class PP_ResultWin(QMainWindow):
         self._processSchedWin = main.processSchedWin()
         self._processSchedWin.show()
         self.hide()
+
+stylesheet = """
+    PPWin {
+        background-image: url(Icons/ppbg.jpg);
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+"""
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

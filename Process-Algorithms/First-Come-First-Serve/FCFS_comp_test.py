@@ -24,7 +24,9 @@ class FCFS_ResultWin(QMainWindow):
         self.width = 1200
         self.height = 950
 
-        #self.setStyleSheet("background-color: black;")
+        #self.centralwidget = QWidget()
+        #self.setCentralWidget(self.centralwidget)
+        #self.setStyleSheet("background: rgb(160,190,190); background-repeat: no-repeat; background-position: center;")
 
         ## Initializing variables
         global FCFS_values
@@ -123,6 +125,7 @@ class FCFS_ResultWin(QMainWindow):
         calButton.clicked.connect(self.clickedMainMenu)
 
     def resultWidgetInit(self):
+
         self.jobPoolLabel = QLabel("Job Pool", self)
         self.jobPoolLabel.setGeometry(QRect(30+130+350,80, 900, 100))
         self.jobPoolLabel.setStyleSheet("QWidget { color: Black}")
@@ -134,6 +137,7 @@ class FCFS_ResultWin(QMainWindow):
         self.FCFSResultTable.setGeometry(QRect(100,50+100, 975, 217))
         self.FCFSResultTable.setFont(QtGui.QFont('Sanserif', 12))
         #self.FCFSResultTable.setStyleSheet("color: black;background-color: white;")
+        self.FCFSResultTable.setStyleSheet("background: rgb(140,150,190);")
 
         self.FCFSResultTable.setHorizontalHeaderLabels(("Process ID", "Arrival Time", "Burst Time", "End Time", "Turn Around Time", "Wating Time"))
         self.FCFSResultTable.setColumnWidth(0,158)
@@ -149,7 +153,7 @@ class FCFS_ResultWin(QMainWindow):
         self.ganttChartTable = QTableWidget(self.rowGanttChartTable,self.columnGanttChartTable,self)
         self.ganttChartTable.setGeometry(QRect(100+50,50+100+460, 975-100, 217))
         self.ganttChartTable.setFont(QtGui.QFont('Sanserif', 12))
-
+        
         self.ganttChartTable.setVerticalHeaderLabels(self.processID)
 
         for i in range(self.allProcess):
@@ -407,7 +411,16 @@ class FCFS_ResultWin(QMainWindow):
         painterTxt.drawText(50, 125, "Process ID")
         painterTxt.end()
         
+stylesheet = """
+    FCFS_ResultWin {
+        background-image: url(robot.jpg);
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+"""
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyleSheet(stylesheet)
     ex = FCFS_ResultWin()
     sys.exit(app.exec_())

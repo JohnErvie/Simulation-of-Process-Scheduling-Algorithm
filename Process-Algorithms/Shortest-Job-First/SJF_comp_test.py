@@ -141,6 +141,7 @@ class SJF_ResultWin(QMainWindow):
         self.ResultTable.setGeometry(QRect(100,50+100, 975, 217))
         self.ResultTable.setFont(QtGui.QFont('Sanserif', 12))
         #self.ResultTable.setStyleSheet("color: black;background-color: white;")
+        self.ResultTable.setStyleSheet("background: rgb(160,200,170);")
 
         self.ResultTable.setHorizontalHeaderLabels(("Process ID", "Arrival Time", "Burst Time", "End Time", "Turn Around Time", "Wating Time"))
         self.ResultTable.setColumnWidth(0,158)
@@ -449,8 +450,17 @@ class SJF_ResultWin(QMainWindow):
         painterTxt.rotate(-90)
         painterTxt.drawText(50, 125, "Process ID")
         painterTxt.end()
+
+stylesheet = """
+    SJF_ResultWin {
+        background-image: url(Icons/sjpbg1.jpg);
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+"""
         
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyleSheet(stylesheet)
     ex = SJF_ResultWin()
     sys.exit(app.exec_())

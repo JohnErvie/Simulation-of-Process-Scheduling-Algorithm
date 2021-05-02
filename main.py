@@ -126,8 +126,17 @@ class processSchedWin(QMainWindow):
         self._SJFWin = SJF.SJFWin()
         self._SJFWin.show()
         self.hide()
+        
+stylesheet = """
+    processSchedWin {
+        background-image: url(Icons/processes.jpg);
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+"""
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyleSheet(stylesheet)
     ex = processSchedWin()
     sys.exit(app.exec_())

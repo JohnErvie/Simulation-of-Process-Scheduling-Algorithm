@@ -22,6 +22,8 @@ class NPPWin(QMainWindow):
         self.width = 1200
         self.height = 950
 
+        self.setStyleSheet("NPPWin{background-image: url(Icons/wiresbg.jpg);background-repeat: no-repeat;background-position: center;}")
+
         self.initWindow()
 
     def initWindow(self):
@@ -734,6 +736,8 @@ class NPP_ResultWin(QMainWindow):
         self._processSchedWin = main.processSchedWin()
         self._processSchedWin.show()
         self.hide()
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

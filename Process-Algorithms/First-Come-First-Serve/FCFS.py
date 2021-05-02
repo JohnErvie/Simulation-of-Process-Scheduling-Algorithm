@@ -21,7 +21,8 @@ class FCFSWin(QMainWindow):
         self.title = "First Come First Serve"
         self.width = 1200
         self.height = 950
-
+        
+        self.setStyleSheet("FCFSWin {background-image: url(Icons/fcfsbg.jpg);background-repeat: no-repeat; background-position: center;}")
         self.initWindow()
 
     def initWindow(self):
@@ -625,7 +626,7 @@ class FCFS_ResultWin(QMainWindow):
         painterTxt.rotate(-90)
         painterTxt.drawText(50, 125, "Process ID")
         painterTxt.end()
-        
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ex = FCFSWin()

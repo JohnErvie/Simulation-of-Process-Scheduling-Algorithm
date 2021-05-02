@@ -22,6 +22,8 @@ class SRTFWin(QMainWindow):
         self.width = 1200
         self.height = 950
 
+        self.setStyleSheet("SRTFWin{background-image: url(Icons/bgimg.jpg);background-repeat: no-repeat;background-position: center;}")
+
         self.initWindow()
 
     def initWindow(self):

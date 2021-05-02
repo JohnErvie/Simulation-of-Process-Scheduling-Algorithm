@@ -140,6 +140,7 @@ class RR_ResultWin(QMainWindow):
         self.ResultTable.setGeometry(QRect(100,50+100, 975, 217))
         self.ResultTable.setFont(QtGui.QFont('Sanserif', 12))
         #self.FCFSResultTable.setStyleSheet("color: black;background-color: white;")
+        self.ResultTable.setStyleSheet("background: rgb(190,150,190);")
 
         self.ResultTable.setHorizontalHeaderLabels(("Process ID", "Arrival Time", "Burst Time", "End Time", "Turn Around Time", "Wating Time"))
         self.ResultTable.setColumnWidth(0,158)
@@ -424,7 +425,16 @@ class RR_ResultWin(QMainWindow):
         self._processSchedWin.show()
         self.hide()
 
+stylesheet = """
+    RR_ResultWin {
+        background-image: url(Icons/bgimg.jpg);
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+"""
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyleSheet(stylesheet)
     ex = RR_ResultWin()
     sys.exit(app.exec_())
